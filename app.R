@@ -1,4 +1,14 @@
+if(!require(shiny)){
+  install.packages("shiny")  
+}
 library(shiny)
+
+if(!require(Vpalmr)){
+  if(!require(remotes)){
+    install.packages("remotes")  
+  }
+  remotes::install_github("VEZY/Vpalmr")
+}
 library(Vpalmr)
 
 # Define UI for application that draws a histogram
