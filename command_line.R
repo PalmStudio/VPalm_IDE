@@ -13,11 +13,12 @@ library(Vpalmr)
 ntrees= NULL
 nleaves= 45
 map= 47
+plant_dist= 9.2
 
 # Import all data and fit the models:
-# Palm_Param= compute_archi(map = map, data_path = "1-Data/Archi", write_path = "4-Outputs")
+Palm_Param= compute_archi(map = map, data_path = "1-Data/Archi", write_path = "3-Outputs")
 Palm_Param= readRDS(file = "3-Outputs/models.RData")
 scene= make_scene(data = Palm_Param, ntrees = ntrees, nleaves = nleaves, 
-                  path = "4-Outputs_new", 
-                  AMAPStudio = "2-VPalm_exe",
-                  plant_dist = 9.2)
+                  path = "3-Outputs", 
+                  AMAPStudio = "3-VPalm_exe",
+                  plant_dist = plant_dist)

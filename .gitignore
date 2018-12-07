@@ -23,8 +23,11 @@
 # VPalm executable (distributed under another licence)
 2-VPalm_exe
 
-# Shiny application design help 
+# Shiny application design help
 design
+
+# Shiny outputs
+*outputs
 
 # produced vignettes
 vignettes/*.html
