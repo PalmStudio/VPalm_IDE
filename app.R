@@ -182,8 +182,8 @@ server <- function(input, output, session) {
   # Palm_data= reactive(ifelse(is.null(Palm_data_import()),Palm_data_default(),Palm_data_import()))
   
   output$data <- renderDataTable({
-    head(Palm_data_default()$Parameter)
-  })
+    Palm_data_default()$Parameter
+  }, options = list(pageLength = 5))
   
   mods= 
     eventReactive(input$archi, {
