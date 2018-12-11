@@ -17,10 +17,32 @@ library(Vpalmr)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
+  
   # Application title
   titlePanel("Virtual Palm plants from field data"),
-  
   hr(),
+  # Ensuring that the background is always the same: 
+  tags$head(tags$style(HTML("
+    .shiny-text-output {
+                            background-color:#fff;
+                            }
+                            "))),
+  h1("Import data", span("And Compute Parameters", style = "font-weight: 300"), 
+     style = "color: #fff; text-align: center;
+              background-image: url('texturebg.png');
+              padding: 20px"),
+  br(),
+  p("Three ways are provided to get parameters for the construction of 3D palms:",
+    tags$ul(
+      tags$li("By loading a previous computation that was
+                       made using this application or the",code("VPalmr"),"package"), 
+      tags$li("By loading the data files from the default folder (in 1-Data/Archi) and making the
+              app computing the parameters using",code("VPalmr::mod_all()")), 
+      tags$li("By loading your own files to the app, and making the
+              app computing the parameters using",code("VPalmr::mod_all()"))
+    )),
+  
+  br(),
   
   sidebarLayout(
     mainPanel(  
