@@ -32,74 +32,94 @@ ui <- fluidPage(
               background-image: url('texturebg.png');
               padding: 20px"),
   br(),
-  p("Three ways are provided to get parameters for the construction of 3D palms:",
+  p("There are two main ways to get parameters for the construction of 3D palms:",
     tags$ul(
-      tags$li("By loading a previous computation that was
-                       made using this application or the",code("VPalmr"),"package"), 
-      tags$li("By loading the data files from the default folder (in 1-Data/Archi) and making the
-              app computing the parameters using",code("VPalmr::mod_all()")), 
-      tags$li("By loading your own files to the app, and making the
-              app computing the parameters using",code("VPalmr::mod_all()"))
-    )),
+      tags$li("By loading a previous computation of the parameters that was made using this
+              application or the",code("Vpalmr"),"package"), 
+      tags$li("By loading the data files first, and then by computing the parameters in the
+              app using",code("VPalmr::mod_all()"),". Loading the data can also be done in two ways:"),
+      tags$ul(
+        tags$li("From the default folder in the Shiny application (in 1-Data/Archi)"), 
+        tags$li("Or by loading each file independently")
+      )
+    )
+  ),
   
   br(),
   
-  sidebarLayout(
-    mainPanel(  
+  tags$ul(
+    tags$li( 
       h2("Import parameters from previous session:"),
       p("If you already did the computation of the parameters for the map you",
         "need on the previous session, you can import the results instead of",
-        " re-computing them"),
-      em("Hint: by default, they are written in '2-Outputs/models.Rdata'"),
-      tableOutput("contents")
-    ),
-    sidebarPanel(
-      fileInput("params_previous",
-                label= "Previous session parameters"),
-      actionButton("action", label = "Submit"),
-      h4(textOutput("title_data_archi")),
-      textOutput("data_archi"),
-      h4(textOutput("title_data_models")),
-      textOutput("data_models")
+        " re-computing them."),
+      em("Hint: by default, they are written in '2-Outputs/models.Rdata'")
+    )),  
+  
+  fluidRow(  
+    column(6,
+           wellPanel(
+             fileInput("params_previous",
+                       label= "Parameters from a previous session "),
+             actionButton("action", label = "Submit"),
+             h4(textOutput("title_data_archi")),
+             textOutput("data_archi"),
+             h4(textOutput("title_data_models")),
+             textOutput("data_models")
+           )
     )
   ),
-  sidebarLayout(
-    mainPanel(  
-      h2("Import parameters from local default file location (1-Data/Archi):"),
-      dataTableOutput("data")
-    ),
-    sidebarPanel(
-      actionButton("load_data_default", label = "Load data")
+  tags$ul(
+    tags$li( 
+      h2("Load the data and compute the parameters"),
+      p("If you need a new computation for the parameters, import the data",
+        "and compute the new parameter values using",code("VPalmr::mod_all()"),".",
+        "Two ways are provided to import the",
+        "data: import them from the default location in the Shiny app (1-Data/Archi)",
+        strong("or"),"load each file separately")
+    )),
+  fluidRow(
+    column(6,
+           wellPanel(  
+             h2("Import parameters from local default file location"),
+             p("The default file location is '1-Data/Archi' in the Shiny application."),
+             dataTableOutput("data"),
+             actionButton("load_data_default", label = "Load data")
+           )
     )
   ),
-  sidebarLayout(
-    mainPanel(
-      h2("Or compute parameters from new data or different age:"),
-      textOutput("architecture"),
-      
-      h3("Import the input files:"),
-      fileInput("param_file", width = '50%',
-                label= "Parameter file (e.g. ParameterSimu.csv):"),
-      fileInput("param_dev", width = '50%',
-                label= "Development file (e.g. Development_Rep4_SMSE.csv):"),
-      fileInput("param_phylotaxy", width = '50%',
-                label= "Phylotaxy file (e.g. Stem_SMSE14.csv):"),
-      fileInput("param_dec", width = '50%',
-                label= "Declination and torsion file (e.g. AnglesC&A_SMSE_Nov14.csv):"),
-      fileInput("param_curv", width = '50%',
-                label= "Curvature file (e.g. LeafCurvature_SMSE14.csv):"),
-      fileInput("param_la", width = '50%',
-                label= "Leaf area file (e.g. LeafArea_monitoring_SMSE.csv):"),
-      fileInput("param_axial_angle", width = '50%',
-                label= "Leaflet axial angle file (e.g. LeafDispositionComp_SMSE14.csv):"),
-      fileInput("param_petiole_width", width = '50%',
-                label= "Petiole width file (e.g. Petiole_SMSE14.csv):"),
-      fileInput("param_twist", width = '50%',
-                label= "Leaf twist (torsion) file (e.g. Torsion_SMSE14.csv):"),
-      p("Submit the files:"),
-      actionButton(inputId = "submit_upload",label = "Submit")
+  wellPanel(
+    h2("Import data from files:"),
+    textOutput("architecture", container = p),
+    
+    h3("Choose all the input files:"),
+    
+    fluidRow(
+      column(2,fileInput("param_file", width = '50%',
+                         label= "Parameter file (e.g. ParameterSimu):")),
+      column(2,fileInput("param_dev", width = '50%',
+                         label= "Development file (e.g. Development_Rep4_SMSE):")),
+      column(2,fileInput("param_phylotaxy", width = '50%',
+                         label= "Phylotaxy file (e.g. Stem_SMSE14):")),
+      column(2,fileInput("param_dec", width = '50%',
+                         label= "Declination and torsion file (e.g. AnglesC&A_SMSE_Nov14):")),
+      column(2,fileInput("param_curv", width = '50%',
+                         label= "Curvature file (e.g. LeafCurvature_SMSE14):")),
+      # ),
+      # fluidRow(
+      column(2,fileInput("param_la", width = '50%',
+                         label= "Leaf area file (e.g. LeafArea_monitoring_SMSE):")),
+      column(2,fileInput("param_axial_angle", width = '50%',
+                         label= "Leaflet axial angle file (e.g. LeafDispositionComp_SMSE14):")),
+      column(2,fileInput("param_petiole_width", width = '50%',
+                         label= "Petiole width file (e.g. Petiole_SMSE14):")),
+      column(2,fileInput("param_twist", width = '50%',
+                         label= "Leaf twist (torsion) file (e.g. Torsion_SMSE14):"))
     ),
-    sidebarPanel(
+    fluidRow(
+      p("Import the files using",code("Vpalmr::import_data"),":"),
+      actionButton(inputId = "submit_upload",label = "Submit"),
+      br(),
       sliderInput("map",
                   "Desired palm age in months after planting:",
                   min = 1,
