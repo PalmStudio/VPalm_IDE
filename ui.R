@@ -94,10 +94,10 @@ ui <- fluidPage(
                     selected = " ",
                     multiple = FALSE),
         fluidRow(
-          conditionalPanel(
-            condition = 'input.load == "Load data from default folder"',
-            
-            wellPanel(  
+          wellPanel(
+            conditionalPanel(
+              condition = 'input.load == "Load data from default folder"',
+              
               h2("Load data from local default file location"),
               p("The default file location is '1-Data/Archi' in the Shiny application."),
               p(textOutput("architecture1", container = span)),
@@ -108,11 +108,9 @@ ui <- fluidPage(
                 condition = 'output.data_trigger == "ok"',
                 p("Data successfully imported !")
               )
-            )
-          ),
-          conditionalPanel(
-            condition = 'input.load == "Load each file separately"',
-            wellPanel(
+            ),
+            conditionalPanel(
+              condition = 'input.load == "Load each file separately"',
               h2("Load data from files:"),
               p(textOutput("architecture2", container = span)),
               
