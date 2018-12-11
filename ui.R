@@ -58,7 +58,6 @@ ui <- fluidPage(
              wellPanel(
                fileInput("params_previous",
                          label= "Parameters from a previous session "),
-               actionButton("action", label = "Submit"),
                h4(textOutput("title_data_archi")),
                textOutput("data_archi"),
                h4(textOutput("title_data_models")),
@@ -90,76 +89,96 @@ ui <- fluidPage(
         p("Two ways are provided to import the",
           "data: import them from the default location in the Shiny app (left)",
           strong("or"),"load each file separately (right)."),
+        selectInput("load", "Choose here:", c(" ","Load data from default folder",
+                                              'Load each file separately'),
+                    selected = " ",
+                    multiple = FALSE),
         fluidRow(
-          column(4,
-                 wellPanel(  
-                   h2("Load data from local default file location"),
-                   p("The default file location is '1-Data/Archi' in the Shiny application."),
-                   p(textOutput("architecture1", container = span)),
-                   br(),
-                   p("Import the files using",code("Vpalmr::import_data"),":"),
-                   actionButton("load_data_default", label = "Load data")
-                 )
+          conditionalPanel(
+            condition = 'input.load == "Load data from default folder"',
+            
+            wellPanel(  
+              h2("Load data from local default file location"),
+              p("The default file location is '1-Data/Archi' in the Shiny application."),
+              p(textOutput("architecture1", container = span)),
+              br(),
+              p("Import the files using",code("Vpalmr::import_data"),":"),
+              actionButton("load_data_default", label = "Load data"),
+              conditionalPanel(
+                condition = 'output.data_trigger == "ok"',
+                p("Data successfully imported !")
+              )
+            )
           ),
-          column(8,
-                 wellPanel(
-                   h2("Load data from files:"),
-                   p(textOutput("architecture2", container = span)),
-                   
-                   h3("Choose each input files:"),
-                   
-                   fluidRow(
-                     column(4,p("Parameter file (e.g. ParameterSimu):"),
-                            fileInput("param_file",NULL)),
-                     column(4,p("Development file (e.g. Development_Rep4_SMSE):"),
-                            fileInput("param_dev", label= NULL)),
-                     column(4,p("Phylotaxy file (e.g. Stem_SMSE14):"),
-                            fileInput("param_phylotaxy", label= NULL))
-                   ),
-                   fluidRow(
-                     column(4,p("Declination/torsion (e.g. AnglesC&A_SMSE_Nov14):"),
-                            fileInput("param_dec", label= NULL)),
-                     column(4,p("Curvature file (e.g. LeafCurvature_SMSE14):"),
-                            fileInput("param_curv", label= NULL)),
-                     column(4,p("Leaf area file (e.g. LeafArea_monitoring_SMSE):"),
-                            fileInput("param_la", label= NULL))
-                   ),
-                   fluidRow(
-                     column(4,p("Leaflet axial angle (e.g. LeafDispositionComp):"),
-                            fileInput("param_axial_angle", label= NULL)),
-                     column(4,p("Petiole width file (e.g. Petiole_SMSE14):"),
-                            fileInput("param_petiole_width", label= NULL)),
-                     column(4,p("Leaf twist (torsion) file (e.g. Torsion_SMSE14):"),
-                            fileInput("param_twist", label= NULL))
-                   ),
-                   fluidRow(
-                     p("Import the files using",code("Vpalmr::import_data"),":"),
-                     actionButton(inputId = "submit_upload",label = "Load data")
-                   )
-                 )        
-                 
+          conditionalPanel(
+            condition = 'input.load == "Load each file separately"',
+            wellPanel(
+              h2("Load data from files:"),
+              p(textOutput("architecture2", container = span)),
+              
+              h3("Choose each input files:"),
+              
+              fluidRow(
+                column(4,p("Parameter file (e.g. ParameterSimu):"),
+                       fileInput("param_file",NULL)),
+                column(4,p("Development file (e.g. Development_Rep4_SMSE):"),
+                       fileInput("param_dev", label= NULL)),
+                column(4,p("Phylotaxy file (e.g. Stem_SMSE14):"),
+                       fileInput("param_phylotaxy", label= NULL))
+              ),
+              fluidRow(
+                column(4,p("Declination/torsion (e.g. AnglesC&A_SMSE_Nov14):"),
+                       fileInput("param_dec", label= NULL)),
+                column(4,p("Curvature file (e.g. LeafCurvature_SMSE14):"),
+                       fileInput("param_curv", label= NULL)),
+                column(4,p("Leaf area file (e.g. LeafArea_monitoring_SMSE):"),
+                       fileInput("param_la", label= NULL))
+              ),
+              fluidRow(
+                column(4,p("Leaflet axial angle (e.g. LeafDispositionComp):"),
+                       fileInput("param_axial_angle", label= NULL)),
+                column(4,p("Petiole width file (e.g. Petiole_SMSE14):"),
+                       fileInput("param_petiole_width", label= NULL)),
+                column(4,p("Leaf twist (torsion) file (e.g. Torsion_SMSE14):"),
+                       fileInput("param_twist", label= NULL))
+              ),
+              fluidRow(
+                p("Import the files using",code("Vpalmr::import_data"),":"),
+                actionButton(inputId = "submit_upload",label = "Load data")
+              ),
+              conditionalPanel(
+                condition = 'output.data_trigger == "ok"',
+                p("Data successfully imported !")
+              )
+            )
           )
         )
       ),
+      conditionalPanel(
+        condition = 'output.data_trigger == "ok"',
+        # textOutput("data_trigger"),
+        tags$li(
+          h3("Glimpse of the imported data"),
+          p("Here is a preview of the parameter file from the data for you to control:"),
+          dataTableOutput("data")
+        )
+      ),
       tags$li(
-      h3("Parameter file"),
-      p("Here is a preview of the parameter file from the data for control:"),
-      dataTableOutput("data"),
-      hr(),
-      h3("Compute the parameters (can take some time)"),
-      actionButton("archi", "Update Architectural parameters"),
-      downloadButton("downloadData", "Download")
-    )))
-
-# sidebarLayout(
-#   sidebarPanel(
-#     numericInput("nleaves",
-#                  "Number of leaves for the virtual palm:",
-#                  value= 45, min= 1, step= 1)
-#   ),
-#   mainPanel(
-#     # plotOutput("distPlot")
-#   )
-# )
-
+        hr(),
+        h3("Compute the parameters (can take some time)"),
+        p("Now that you have imported the data files, compute the parameters",
+          "by clicking the following button:"),
+        actionButton("updatearchi", "Update Architectural parameters"),
+        p(textOutput("modout"))
+      )
+    )
+  ),
+  conditionalPanel(
+    condition = 'output.param_trigger == "ok"',
+    h3("Download the parameters for VPalm"),
+    p("Now that the parameters are fitted (or imported), you can download the results for",
+      "further usage:"),
+    downloadButton("downloadData", "Download")
+  )
 )
+

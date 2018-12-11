@@ -19,7 +19,6 @@ server <- function(input, output, session) {
   # Or read the inputs from local folder:
   Palm_data_default=
     eventReactive(input$load_data_default, {
-      # cat("\nImporting data from '1-Data/Archi' for MAP ", input$map, " months after planting\n")
       data_path= file.path(getwd(), "1-Data/Archi")
       data_path=
         list(
@@ -40,11 +39,6 @@ server <- function(input, output, session) {
           error = function(out){
             message("Error during Vpalmr::import_data execution")
             message("Original function error:")
-            message(out)
-          },
-          warning= function(out){
-            message("warning(s) during Vpalmr::import_data execution")
-            message("Original function warning:")
             message(out)
           })
       message("Data successfully imported")
@@ -79,37 +73,45 @@ server <- function(input, output, session) {
                     
                   })
   
-  # Palm_data= reactive(ifelse(is.null(Palm_data_import()),Palm_data_default(),Palm_data_import()))
+  # Find the right Palm_data_* according to the choices of the user  ---------------
+  # NB: choices are either loading from default folder or by uploading custom files
+  Palm_data= reactive({
+    switch(input$load,
+           "Load data from default folder" = Palm_data_default(),
+           "Load each file separately" = Palm_data_import())
+  }) 
   
-
-  output$data <- renderDataTable({
-    Palm_data_default()$Parameter
-  }, options = list(pageLength = 5))
+  # trigger the display of the Parameter data.frame from the data just read (for control):
+  output$data_trigger= 
+    renderText({
+      ifelse(is.data.frame(Palm_data()$Parameter),'ok','notok')
+    })
+  outputOptions(output, "data_trigger", suspendWhenHidden = FALSE)  
+  
+  output$data=
+    renderDataTable({
+      Palm_data()$Parameter
+    }, options = list(pageLength = 5))
   
   mods= 
-    eventReactive(input$archi, {
-      updateSliderInput(session, "map", value = input$map, min = min(Palm_data()$input$Parameter$MAP),
-                        max = max(Palm_data()$input$Parameter$MAP))
-      cat("Computing parameters for ", input$map, " months after planting\n")
-      if(!is.null(Palm_data())){
+    eventReactive(input$updatearchi, {
+      # updateSliderInput(session, "map", value = input$map, min = min(Palm_data()$Parameter$MAP),
+      #                   max = max(Palm_data()$Parameter$MAP))
+      if(!is.null(Palm_data()$Parameter)){
         # Fit the models on data:
-        mod_all(x= Palm_data())
+        models= mod_all(x= Palm_data())
       }
+      models
+    })
+  output$modout=
+    renderText({
+      is(mods()) # trigger when mods is created
+      paste("Architectural parameters successfully computed !")
     })
   
-  output$downloadData= downloadHandler(
-    filename = function() {
-      paste0("models_MAP_",input$map,".csv")
-    },
-    content = function(file) {
-      write_models(data = list(input= Palm_data(), model= mods()), path = file)
-      message("Data and models were successfully written in: ", file)
-    }
-  )
-  
-  
-  
-  
+  Palm_Param_computed= reactive({
+    list(input= isolate(Palm_data()), model= mods())
+  })
   
   # Find the right Palm_Param_* according to the choices of the user  ---------
   # NB: either load previous or compute it
@@ -120,9 +122,8 @@ server <- function(input, output, session) {
            "Compute new parameters" = Palm_Param_computed())
   })
   
-  
   # Return names of input and models from loaded model.Rdata for checking:
-  observeEvent(c( 
+  observeEvent(c(
     input$params_previous
   ),{
     output$title_data_archi <- renderText({
@@ -139,11 +140,26 @@ server <- function(input, output, session) {
       paste(names(Palm_Param()$model), collapse= ', ')
     })
     
-    output$contents <- renderTable({
-      if(is.null(Palm_Param)){return(NULL)}
-    })
-    
   })
+  
+  # trigger the display of the download button when parameters are available:
+  output$param_trigger= 
+    renderText({
+      ifelse(length(Palm_Param())==2,'ok','notok')
+    })
+  outputOptions(output, "param_trigger", suspendWhenHidden = FALSE)  
+  
+  # Make the data downloadable:
+  output$downloadData= downloadHandler(
+    filename = function() {
+      paste0("models_MAP_",input$map,".RData")
+      # "model.RData"
+    },
+    content = function(file) {
+      saveRDS(Palm_Param(), file)
+      # message("Data and models were successfully written in: ", file)
+    }
+  )
 }
 
 # Run the application 
