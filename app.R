@@ -23,10 +23,7 @@ ui <- fluidPage(
   hr(),
   # Ensuring that the background is always the same: 
   tags$head(tags$style(HTML("
-    .shiny-text-output {
-                            background-color:#fff;
-                            }
-                            "))),
+    .shiny-text-output {background-color:#fff;}"))),
   h1("Import data", span("And Compute Parameters", style = "font-weight: 300"), 
      style = "color: #fff; text-align: center;
               background-image: url('texturebg.png');
@@ -53,82 +50,97 @@ ui <- fluidPage(
       p("If you already did the computation of the parameters for the map you",
         "need on the previous session, you can import the results instead of",
         " re-computing them."),
-      em("Hint: by default, they are written in '2-Outputs/models.Rdata'")
-    )),  
-  
-  fluidRow(  
-    column(6,
-           wellPanel(
-             fileInput("params_previous",
-                       label= "Parameters from a previous session "),
-             actionButton("action", label = "Submit"),
-             h4(textOutput("title_data_archi")),
-             textOutput("data_archi"),
-             h4(textOutput("title_data_models")),
-             textOutput("data_models")
-           )
-    )
-  ),
-  tags$ul(
+      em("Hint: by default, they are written in '2-Outputs/models.Rdata'"),
+      fluidRow(  
+        column(6,
+               wellPanel(
+                 fileInput("params_previous",
+                           label= "Parameters from a previous session "),
+                 actionButton("action", label = "Submit"),
+                 h4(textOutput("title_data_archi")),
+                 textOutput("data_archi"),
+                 h4(textOutput("title_data_models")),
+                 textOutput("data_models")
+               )
+        )
+      )
+    ),  
     tags$li( 
       h2("Load the data and compute the parameters"),
       p("If you need a new computation for the parameters, import the data",
-        "and compute the new parameter values using",code("VPalmr::mod_all()"),".",
-        "Two ways are provided to import the",
-        "data: import them from the default location in the Shiny app (1-Data/Archi)",
-        strong("or"),"load each file separately")
-    )),
-  fluidRow(
-    column(6,
-           wellPanel(  
-             h2("Import parameters from local default file location"),
-             p("The default file location is '1-Data/Archi' in the Shiny application."),
-             dataTableOutput("data"),
-             actionButton("load_data_default", label = "Load data")
-           )
-    )
-  ),
-  wellPanel(
-    h2("Import data from files:"),
-    textOutput("architecture", container = p),
-    
-    h3("Choose all the input files:"),
-    
-    fluidRow(
-      column(2,fileInput("param_file", width = '50%',
-                         label= "Parameter file (e.g. ParameterSimu):")),
-      column(2,fileInput("param_dev", width = '50%',
-                         label= "Development file (e.g. Development_Rep4_SMSE):")),
-      column(2,fileInput("param_phylotaxy", width = '50%',
-                         label= "Phylotaxy file (e.g. Stem_SMSE14):")),
-      column(2,fileInput("param_dec", width = '50%',
-                         label= "Declination and torsion file (e.g. AnglesC&A_SMSE_Nov14):")),
-      column(2,fileInput("param_curv", width = '50%',
-                         label= "Curvature file (e.g. LeafCurvature_SMSE14):")),
-      # ),
-      # fluidRow(
-      column(2,fileInput("param_la", width = '50%',
-                         label= "Leaf area file (e.g. LeafArea_monitoring_SMSE):")),
-      column(2,fileInput("param_axial_angle", width = '50%',
-                         label= "Leaflet axial angle file (e.g. LeafDispositionComp_SMSE14):")),
-      column(2,fileInput("param_petiole_width", width = '50%',
-                         label= "Petiole width file (e.g. Petiole_SMSE14):")),
-      column(2,fileInput("param_twist", width = '50%',
-                         label= "Leaf twist (torsion) file (e.g. Torsion_SMSE14):"))
-    ),
-    fluidRow(
-      p("Import the files using",code("Vpalmr::import_data"),":"),
-      actionButton(inputId = "submit_upload",label = "Submit"),
-      br(),
+        "and compute the new parameter values using",code("VPalmr::mod_all()"),"."),
+      # br(),
+      hr(),
+      h3("Please choose the desired palm age:"),
       sliderInput("map",
                   "Desired palm age in months after planting:",
                   min = 1,
                   max = 40,
                   value = 30),
+      hr(),
+      h3("Load the data:"),
+      p("Two ways are provided to import the",
+        "data: import them from the default location in the Shiny app (left)",
+        strong("or"),"load each file separately (right)."),
+      fluidRow(
+        column(4,
+               wellPanel(  
+                 h2("Load data from local default file location"),
+                 p("The default file location is '1-Data/Archi' in the Shiny application."),
+                 p(textOutput("architecture1", container = span)),
+                 br(),
+                 p("Import the files using",code("Vpalmr::import_data"),":"),
+                 actionButton("load_data_default", label = "Load data")
+               )
+        ),
+        column(8,
+               wellPanel(
+                 h2("Load data from files:"),
+                 p(textOutput("architecture2", container = span)),
+                 
+                 h3("Choose each input files:"),
+                 
+                 fluidRow(
+                   column(4,p("Parameter file (e.g. ParameterSimu):"),
+                          fileInput("param_file",NULL)),
+                   column(4,p("Development file (e.g. Development_Rep4_SMSE):"),
+                          fileInput("param_dev", label= NULL)),
+                   column(4,p("Phylotaxy file (e.g. Stem_SMSE14):"),
+                          fileInput("param_phylotaxy", label= NULL))
+                 ),
+                 fluidRow(
+                   column(4,p("Declination/torsion (e.g. AnglesC&A_SMSE_Nov14):"),
+                          fileInput("param_dec", label= NULL)),
+                   column(4,p("Curvature file (e.g. LeafCurvature_SMSE14):"),
+                          fileInput("param_curv", label= NULL)),
+                   column(4,p("Leaf area file (e.g. LeafArea_monitoring_SMSE):"),
+                          fileInput("param_la", label= NULL))
+                 ),
+                 fluidRow(
+                   column(4,p("Leaflet axial angle (e.g. LeafDispositionComp):"),
+                          fileInput("param_axial_angle", label= NULL)),
+                   column(4,p("Petiole width file (e.g. Petiole_SMSE14):"),
+                          fileInput("param_petiole_width", label= NULL)),
+                   column(4,p("Leaf twist (torsion) file (e.g. Torsion_SMSE14):"),
+                          fileInput("param_twist", label= NULL))
+                 ),
+                 fluidRow(
+                   p("Import the files using",code("Vpalmr::import_data"),":"),
+                   actionButton(inputId = "submit_upload",label = "Load data")
+                 )
+               )        
+               
+        )
+      ),
+      h3("Parameter file"),
+      p("Here is a preview of the parameter file from the data for control:"),
+      dataTableOutput("data"),
+      hr(),
+      h3("Compute the parameters (can take some time)"),
       actionButton("archi", "Update Architectural parameters"),
       downloadButton("downloadData", "Download")
-    )
-  )
+    ))
+  
   # sidebarLayout(
   #   sidebarPanel(
   #     numericInput("nleaves",
@@ -144,16 +156,18 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  
-  output$architecture <- renderText({
+  map= reactive({
     paste("Month after planting=", input$map)
   })
+  
+  output$architecture1= renderText({map()})
+  output$architecture2= renderText({map()})
   
   # Architecture parameter fit: ---------------------------------------------
   # Either read from file: 
   Palm_Param= 
     eventReactive(input$params_previous, {
-      cat("Computing parameters for ", input$map, " months after planting\n")
+      message("Computing parameters for ", input$map, " months after planting\n")
       readRDS(input$params_previous$datapath)
     })
   
