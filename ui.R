@@ -103,11 +103,7 @@ ui <- fluidPage(
               p(textOutput("architecture1", container = span)),
               br(),
               p("Import the files using",code("Vpalmr::import_data"),":"),
-              actionButton("load_data_default", label = "Load data"),
-              conditionalPanel(
-                condition = 'output.data_trigger == "ok"',
-                p("Data successfully imported !")
-              )
+              actionButton("load_data_default", label = "Load data")
             ),
             conditionalPanel(
               condition = 'input.load == "Load each file separately"',
@@ -143,11 +139,12 @@ ui <- fluidPage(
               fluidRow(
                 p("Import the files using",code("Vpalmr::import_data"),":"),
                 actionButton(inputId = "submit_upload",label = "Load data")
-              ),
-              conditionalPanel(
-                condition = 'output.data_trigger == "ok"',
-                p("Data successfully imported !")
               )
+            ),
+            conditionalPanel(
+              condition = 'output.data_trigger == "ok"',
+              br(),
+              p("Data successfully imported !")
             )
           )
         )
