@@ -75,6 +75,10 @@ server <- function(input, output, session) {
            "Load each file separately" = Palm_data_import())
   }) 
   
+  observeEvent(Palm_data(), {
+    showNotification("Data successfully imported")
+  })
+  
   # trigger the display of the Parameter data.frame from the data just read (for control):
   output$data_trigger= 
     renderText({
@@ -92,8 +96,15 @@ server <- function(input, output, session) {
       # updateSliderInput(session, "map", value = input$map, min = min(Palm_data()$Parameter$MAP),
       #                   max = max(Palm_data()$Parameter$MAP))
       if(!is.null(Palm_data()$Parameter)){
+        # Create a Progress object
+        progress_obj <- shiny::Progress$new()
+        progress_obj$set(message = "Computing data", value = 0)
+        # Close the progress when this reactive exits (even if there's an error)
+        on.exit(progress_obj$close())
+        
         # Fit the models on data:
-        models= mod_all(x= Palm_data())
+        models= mod_all(x= Palm_data(), progress = 
+                          function(x)updateProgress(detail = x, progress_obj = progress_obj))
       }
       models
     })
@@ -114,6 +125,10 @@ server <- function(input, output, session) {
     switch(input$previous,
            "Load previous computation" = Palm_Param_previous(),
            "Compute new parameters" = Palm_Param_computed())
+  })
+  
+  observeEvent(Palm_Param(), {
+    showNotification("Parameters successfully computed")
   })
   
   # Return names of input and models from loaded model.Rdata for checking:

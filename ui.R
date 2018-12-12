@@ -13,6 +13,7 @@ if(!require(Vpalmr)){
   remotes::install_github("VEZY/Vpalmr")
 }
 library(Vpalmr)
+source("helpers.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
