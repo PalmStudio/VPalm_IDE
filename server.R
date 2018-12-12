@@ -47,25 +47,26 @@ server <- function(input, output, session) {
   
   
   Palm_data_import=
-    eventReactive(input$submit_upload,
-                  {
-                    cat("\nImporting data for ", input$map, " months after planting\n")
-                    tryCatch(
-                      do.call(Vpalmr::import_data, list(parameter= input$param_file$datapath,
-                                                        development= input$param_dev$datapath,
-                                                        phylotaxy= input$param_phylotaxy$datapath,
-                                                        declination= input$param_dec$datapath,
-                                                        curvature= input$param_curv$datapath,
-                                                        leaf_area= input$param_la$datapath,
-                                                        axial_angle= input$param_axial_angle$datapath,
-                                                        petiole_width= input$param_petiole_width$datapath,
-                                                        twist= input$param_twist$datapath, map= input$map)),
-                      error = function(out){
-                        message("Error during Vpalmr::import_data execution")
-                        message("Original function error:")
-                        message(out)
-                      })
-                  })
+    eventReactive(
+      input$submit_upload,
+      {
+        cat("\nImporting data for ", input$map, " months after planting\n")
+        tryCatch(
+          do.call(Vpalmr::import_data, list(parameter= input$param_file$datapath,
+                                            development= input$param_dev$datapath,
+                                            phylotaxy= input$param_phylotaxy$datapath,
+                                            declination= input$param_dec$datapath,
+                                            curvature= input$param_curv$datapath,
+                                            leaf_area= input$param_la$datapath,
+                                            axial_angle= input$param_axial_angle$datapath,
+                                            petiole_width= input$param_petiole_width$datapath,
+                                            twist= input$param_twist$datapath, map= input$map)),
+          error = function(out){
+            message("Error during Vpalmr::import_data execution")
+            message("Original function error:")
+            message(out)
+          })
+      })
   
   # Find the right Palm_data_* according to the choices of the user  ---------------
   # NB: choices are either loading from default folder or by uploading custom files
@@ -132,9 +133,7 @@ server <- function(input, output, session) {
   })
   
   # Return names of input and models from loaded model.Rdata for checking:
-  observeEvent(c(
-    input$params_previous
-  ),{
+  observeEvent(input$params_previous,{
     output$title_data_archi <- renderText({
       "Architectural data:"
     })
@@ -169,6 +168,38 @@ server <- function(input, output, session) {
       # message("Data and models were successfully written in: ", file)
     }
   )
+  
+  
+  
+  # Page 2: Call VPalm and build OPF/OPS files ------------------------------
+  
+  output$progeny = renderUI({
+    selectInput(inputId = 'prog', 'Progeny', 
+                c("All progenies",unique(Palm_Param()$input$Parameter$Progeny)))
+  })
+  
+  output$scenepar=
+    reactive({
+      paste(c(names(Palm_Param()), ifelse(is.na(input$nbtrees),0,input$nbtrees),
+              input$nleaves,
+              input$prog,input$plant_dist,ifelse(is.null(input$planting_design),"NULL","other")))
+    })
+  
+  
+  observeEvent(
+    input$makescene,
+    {
+      Vpalmr::make_scene(data = Palm_Param(),
+                         nleaves = input$nleaves,
+                         path = file.path(getwd(), "3-Outputs"), 
+                         Progeny = ifelse(input$prog=="All progenies",NULL,input$prog),
+                         AMAPStudio = file.path(getwd(), "2-VPalm_exe"),
+                         ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
+                         plant_dist = input$plant_dist)
+      message("Vpalmr::extract_progeny() ran successfully")
+    })
+  
+  
 }
 
 # Run the application 
