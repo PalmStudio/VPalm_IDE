@@ -1,4 +1,4 @@
-pack= c('shiny', 'shinyFiles')
+pack= c('shiny')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){
     install.packages(x)  

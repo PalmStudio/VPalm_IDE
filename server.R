@@ -64,13 +64,7 @@ server <- function(input, output, session) {
                         message("Error during Vpalmr::import_data execution")
                         message("Original function error:")
                         message(out)
-                      },
-                      warning= function(out){
-                        message("warning(s) during Vpalmr::import_data execution")
-                        message("Original function warning:")
-                        message(out)
                       })
-                    
                   })
   
   # Find the right Palm_data_* according to the choices of the user  ---------------
