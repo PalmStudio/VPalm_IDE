@@ -105,7 +105,11 @@ server <- function(input, output, session) {
         
         # Fit the models on data:
         models= mod_all(x= Palm_data(), progress = 
-                          function(x)updateProgress(detail = x, progress_obj = progress_obj))
+                          function(x){
+                            updateProgress(detail = x, progress_obj = progress_obj,
+                                           steps= 21)})
+      }else{
+        models= NULL
       }
       models
     })
@@ -185,21 +189,72 @@ server <- function(input, output, session) {
               input$prog,input$plant_dist,ifelse(is.null(input$planting_design),"NULL","other")))
     })
   
+  scenes= 
+    eventReactive(
+      input$makescene,
+      {
+        progress_obj <- shiny::Progress$new()
+        progress_obj$set(message = "Making scene:", value = 0)
+        # Close the progress when this reactive exits (even if there's an error)
+        on.exit(progress_obj$close())
+        if(!is.null(Palm_Param())){
+          scene= 
+            Vpalmr::make_scene(data = Palm_Param(),
+                               nleaves = input$nleaves,
+                               path = file.path(getwd(), "3-Outputs"), 
+                               Progeny = ifelse(input$prog=="All progenies",NULL,input$prog),
+                               AMAPStudio = file.path(getwd(), "2-VPalm_exe"),
+                               ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
+                               plant_dist = input$plant_dist,
+                               progress = function(x){
+                                 updateProgress(detail = x, progress_obj = progress_obj,
+                                                steps = 7) 
+                               })
+          message("Vpalmr::extract_progeny() ran successfully")
+        }else{
+          scene= NULL
+        }
+        scene
+      })
   
-  observeEvent(
-    input$makescene,
-    {
-      Vpalmr::make_scene(data = Palm_Param(),
-                         nleaves = input$nleaves,
-                         path = file.path(getwd(), "3-Outputs"), 
-                         Progeny = ifelse(input$prog=="All progenies",NULL,input$prog),
-                         AMAPStudio = file.path(getwd(), "2-VPalm_exe"),
-                         ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
-                         plant_dist = input$plant_dist)
-      message("Vpalmr::extract_progeny() ran successfully")
-    })
+  observeEvent(scenes(), {
+    showNotification("Scene successfully created and written")
+  })
   
   
+  output$plot_design <- renderPlot({
+    scenes()$plot_design%>%
+      mutate(image= 'www/palm_tiny.png')%>%
+      ggplot(aes(x= x, y= y))+
+      geom_image(aes(image= image), size= input$palm_size)+
+      geom_point(aes(color= "Palm tree center"))+
+      ylim(low= unique(plot_design$ymin),
+           high= unique(plot_design$ymax))+
+      xlim(low= unique(plot_design$xmin),
+           high= unique(plot_design$xmax))+
+      labs(colour = "")+
+      theme(legend.position="bottom")
+  })
+  
+  output$plot_info <- renderText({
+    xy_str <- function(e) {
+      if(is.null(e)) return("NULL\n")
+      paste0("x=", round(e$x, 2), " y=", round(e$y, 2), "\n")
+    }
+    xy_range_str <- function(e) {
+      if(is.null(e)) return("NULL\n")
+      paste0("xmin=", round(e$xmin, 2), " xmax=", round(e$xmax, 2), 
+             " ymin=", round(e$ymin, 2), " ymax=", round(e$ymax, 2),
+             "\nArea= ",round((e$xmax-e$xmin)*(e$ymax-e$ymin),2))
+    }
+
+    paste0(
+      "Value on click: ", xy_str(input$plot_click),
+      "Value on hover: ", xy_str(input$plot_hover),
+      "Selection: ", xy_range_str(input$plot_brush)
+    )
+  })
+
 }
 
 # Run the application 

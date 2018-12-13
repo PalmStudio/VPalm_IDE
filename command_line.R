@@ -28,3 +28,25 @@ scene= make_scene(data = Palm_Param, ntrees = ntrees, nleaves = nleaves,
 
 test= data.table::fread('1-Data/Archi/Torsion_SMSE14.csv', dec= ',', data.table= F)
 
+scene= make_scene(data = Palm_Param, ntrees = 0, nleaves = 45, 
+                  path = "3-Outputs", Progeny = NULL,
+                  AMAPStudio = "2-VPalm_exe",
+                  plant_dist = plant_dist)
+
+
+scene= make_scene(data = Palm_Param, ntrees = 0, nleaves = 45, 
+                  path = "3-Outputs", Progeny = "DA1",
+                  AMAPStudio = "2-VPalm_exe",
+                  plant_dist = plant_dist)
+
+scene$plot_design%>%
+  mutate(image= 'www/palm_tiny.png')%>%
+  ggplot(aes(x= x, y= y))+
+  geom_image(aes(image= image), size= 0.4)+
+  geom_point(aes(color= "Palm tree center"))+
+  ylim(low= unique(plot_design$ymin),
+       high= unique(plot_design$ymax))+
+  xlim(low= unique(plot_design$xmin),
+       high= unique(plot_design$xmax))+
+  labs(colour = "")+
+  theme(legend.position="bottom")

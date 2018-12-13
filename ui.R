@@ -1,4 +1,4 @@
-pack= c('shiny')
+pack= c('shiny','ggplot2','ggimage','dplyr')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){
     install.packages(x)  
@@ -29,6 +29,9 @@ ui <- navbarPage(
            # Ensuring that the background is always the same: 
            tags$head(tags$style(HTML("
                             .shiny-text-output {background-color:#fff;}"))),
+           tags$head(HTML('<link rel="shortcut icon" href="www/favicon.ico">
+                          <link rel="icon" type="image/png" sizes="16x16" href="www/favicon-16x16.png">
+                          <link rel="icon" type="image/png" sizes="32x32" href="www/favicon-32x32.png">')),
            h1("Import data", span("And Compute Parameters", style = "font-weight: 300"), 
               style = "color: #fff; text-align: center;
                               background-image: url('texturebg.png');
@@ -266,7 +269,21 @@ ui <- navbarPage(
            ),
            p(textOutput("scenepar")),
            h3("Compute the scene"),
-           actionButton("makescene", "Make the scene")
+           actionButton("makescene", "Make the scene"),
+           br(),
+           h3("Plot of the stand design"),
+           p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
+              the scene precisely because the size of the palms is arbitrary. Please open the scene in Xplot to get
+              the true dimensions."),
+           numericInput(inputId = "palm_size", 
+                        label = "Choose the size of the palm trees in the scene (rendering purpose only)",
+                        value = 0.4, min = 0.01, max = 10, step = 0.01),
+           plotOutput("plot_design", width= 800, height = 800,
+                      click = "plot_click",
+                      hover = "plot_hover",
+                      brush = "plot_brush"
+           ),
+           verbatimTextOutput("plot_info")
   )
 )
 
