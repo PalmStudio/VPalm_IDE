@@ -275,15 +275,26 @@ ui <- navbarPage(
            p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
               the scene precisely because the size of the palms is arbitrary. Please open the scene in Xplot to get
               the true dimensions."),
+           p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
            numericInput(inputId = "palm_size", 
-                        label = "Choose the size of the palm trees in the scene (rendering purpose only)",
+                        label = "",
                         value = 0.4, min = 0.01, max = 10, step = 0.01),
-           plotOutput("plot_design", width= 800, height = 800,
+           plotOutput("plot_design", width= 600, height = 600,
                       click = "plot_click",
                       hover = "plot_hover",
                       brush = "plot_brush"
            ),
-           verbatimTextOutput("plot_info")
+           verbatimTextOutput("plot_info"),
+           p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
+           numericInput(inputId = "voronois", 
+                        label = "How many voronoïs in col and rows ?",
+                        value = 3, min = 1, max = 20, step = 1),
+           plotOutput("plot_design_rep", width= 1200, height = 1200,
+                      click = "plot_click_rep",
+                      hover = "plot_hover_rep",
+                      brush = "plot_brush_rep"
+           ),
+           verbatimTextOutput("plot_info_rep")       
   )
 )
 

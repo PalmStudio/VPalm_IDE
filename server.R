@@ -223,7 +223,8 @@ server <- function(input, output, session) {
   
   
   output$plot_design <- renderPlot({
-    scenes()$plot_design%>%
+    plot_design= scenes()$plot_design
+    plot_design%>%
       mutate(image= 'www/palm_tiny.png')%>%
       ggplot(aes(x= x, y= y))+
       geom_image(aes(image= image), size= input$palm_size)+
@@ -237,24 +238,70 @@ server <- function(input, output, session) {
   })
   
   output$plot_info <- renderText({
-    xy_str <- function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0("x=", round(e$x, 2), " y=", round(e$y, 2), "\n")
-    }
-    xy_range_str <- function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0("xmin=", round(e$xmin, 2), " xmax=", round(e$xmax, 2), 
-             " ymin=", round(e$ymin, 2), " ymax=", round(e$ymax, 2),
-             "\nArea= ",round((e$xmax-e$xmin)*(e$ymax-e$ymin),2))
-    }
-
     paste0(
       "Value on click: ", xy_str(input$plot_click),
       "Value on hover: ", xy_str(input$plot_hover),
       "Selection: ", xy_range_str(input$plot_brush)
     )
   })
-
+  
+  
+  output$plot_design_rep <- renderPlot({
+    plot_design= scenes()$plot_design
+    
+    # Matrix of the design (each cell is a Voronoi):
+    mat_plot= expand.grid(Row= 1:input$voronois, 
+                          Col= 1:input$voronois)
+    
+    # Full design:
+    design=
+      mapply(function(Row,Col){
+        plot_design%>%
+          select(x,y,xmax,ymax,xmin,ymin)%>%
+          mutate(xmin= xmax*(Col-1), ymin= ymax*(Row-1),
+                 x= x+xmin, y= y+ymin,
+                 xmax= xmax*Col, ymax= ymax*Row,
+                 Col= Col, Row= Row)
+      }, Row= mat_plot$Row, Col= mat_plot$Col)%>%t()%>%as_tibble()%>%
+      tidyr::unnest()
+    
+    voronoi_stands=
+      design%>%
+      mutate(group= paste0('x:',Col,", y:",Row))%>%
+      group_by(group)%>%
+      summarise(coords= 
+                  list(expand.grid(x= unique(c(xmin,xmax)),
+                                   y= unique(c(ymin,ymax))))
+      )%>%
+      mutate(v_id= as.factor(1:n()))%>%
+      tidyr::unnest()%>%arrange(x)%>%
+      mutate(id= rep(c(1,2,4,3), length(unique(group))))%>%
+      arrange(group,id)
+    
+    design%>%
+      mutate(image= 'www/palm_tiny.png')%>%
+      ggplot(aes(x= .data$x, y= .data$y))+
+      geom_image(aes(image= image), size= input$palm_size/3)+
+      geom_point(aes(color= "Palm tree center"))+
+      ylim(low= min(unique(design$ymin)),
+           high= max(unique(design$ymax)))+
+      xlim(low= min(unique(design$xmin)),
+           high= max(unique(design$xmax)))+
+      theme(legend.position="bottom")+
+      labs(fill= "Voronoï index", x= "x coordinate (m)", y= "y coordinate (m)")+
+      geom_polygon(data= voronoi_stands, aes(x= x, y= y, fill= v_id, color= v_id), alpha= 0.2)+
+      guides(color= FALSE)
+  })
+  
+  
+  output$plot_info_rep <- renderText({
+    paste0(
+      "Value on click: ", xy_str(input$plot_click_rep),
+      "Value on hover: ", xy_str(input$plot_hover_rep),
+      "Selection: ", xy_range_str(input$plot_brush_rep)
+    )
+  })
+  
 }
 
 # Run the application 

@@ -17,3 +17,16 @@ updateProgress= function(value = NULL, detail = NULL,progress_obj,steps) {
   }
   progress_obj$set(value = value, detail = detail)
 }
+
+
+
+xy_str <- function(e) {
+  if(is.null(e)) return("NULL\n")
+  paste0("x=", round(e$x, 2), " y=", round(e$y, 2), "\n")
+}
+xy_range_str <- function(e) {
+  if(is.null(e)) return("NULL\n")
+  paste0("xmin=", round(e$xmin, 2), " xmax=", round(e$xmax, 2), 
+         " ymin=", round(e$ymin, 2), " ymax=", round(e$ymax, 2),
+         "\nArea= ",round((e$xmax-e$xmin)*(e$ymax-e$ymin),2))
+}
