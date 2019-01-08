@@ -179,7 +179,7 @@ server <- function(input, output, session) {
   
   output$progeny = renderUI({
     selectInput(inputId = 'prog', 'Progeny', 
-                c("All progenies",unique(Palm_Param()$input$Parameter$Progeny)))
+                c("All progenies","Average progeny",unique(Palm_Param()$input$Parameter$Progeny)))
   })
   
   output$scenepar=
@@ -202,7 +202,14 @@ server <- function(input, output, session) {
             Vpalmr::make_scene(data = Palm_Param(),
                                nleaves = input$nleaves,
                                path = file.path(getwd(), "3-Outputs"), 
-                               Progeny = ifelse(input$prog=="All progenies",NULL,input$prog),
+                               Progeny = 
+                                 if(input$prog=="All progenies"){
+                                   NULL
+                                 }else if(input$prog=="Average progeny"){
+                                   "Average"
+                                 }else{
+                                   input$prog
+                                 },
                                AMAPStudio = file.path(getwd(), "2-VPalm_exe"),
                                ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
                                plant_dist = input$plant_dist,
@@ -274,9 +281,12 @@ server <- function(input, output, session) {
                                    y= unique(c(ymin,ymax))))
       )%>%
       mutate(v_id= as.factor(1:n()))%>%
-      tidyr::unnest()%>%arrange(x)%>%
-      mutate(id= rep(c(1,2,4,3), length(unique(group))))%>%
-      arrange(group,id)
+      tidyr::unnest()%>%  
+      group_by(v_id)%>%
+      mutate(pos= ifelse(x==min(x)&y==min(y),1,
+                         ifelse(x==min(x)&y==max(y),2,
+                                ifelse(x==max(x)&y==min(y),4,3))))%>%
+      arrange(v_id,pos)
     
     design%>%
       mutate(image= 'www/palm_tiny.png')%>%

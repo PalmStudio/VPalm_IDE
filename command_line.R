@@ -28,3 +28,4 @@ scene= make_scene(data = Palm_Param, ntrees = 0, nleaves = 45,
                   AMAPStudio = "2-VPalm_exe",
                   plant_dist = plant_dist)
 
+
