@@ -1,7 +1,7 @@
 pack= c('shiny','ggplot2','ggimage','dplyr')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){
-    install.packages(x)  
+    install.packages(x, repos= "https://cloud.r-project.org")  
   }
   require(x, character.only = T)
 })

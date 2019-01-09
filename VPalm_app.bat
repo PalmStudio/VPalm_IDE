@@ -1,1 +1,1 @@
-R -e "shiny::runApp('~')"
+R -e "shiny::runApp(launch.browser= TRUE)"
