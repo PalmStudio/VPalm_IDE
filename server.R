@@ -258,7 +258,7 @@ server <- function(input, output, session) {
                                  }else{
                                    input$prog
                                  },
-                               AMAPStudio = file.path(getwd(), "2-VPalm_exe"),
+                               AMAPStudio = getwd(),
                                ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
                                plant_dist = input$plant_dist,
                                progress = function(x){
