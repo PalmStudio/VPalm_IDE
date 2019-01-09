@@ -76,35 +76,78 @@ server <- function(input, output, session) {
            "Load each file separately" = Palm_data_import())
   }) 
   
-  observeEvent(Palm_data(), {
-    showNotification("Data successfully imported")
-  })
+  
   
   # trigger the display of the Parameter data.frame from the data just read (for control):
   output$data_trigger= 
     renderText({
-      ifelse(is.data.frame(Palm_data()$Parameter),'ok','notok')
+      if(!is.null(Palm_data()$Parameter)&&is.data.frame(Palm_data()$Parameter)&&
+         nrow(Palm_data()$Area)>0){
+        showNotification("Data successfully imported")
+        'ok'
+      }else{
+        showNotification("Given MAP does not yield enough data")
+        'notok'
+      }
     })
   outputOptions(output, "data_trigger", suspendWhenHidden = FALSE)  
   
+  output$progeny_filt = renderUI({
+    checkboxGroupInput(inputId = 'prog_filt', label = 'Filter progenies:', 
+                       choices = unique(Palm_data()$Parameter$Progeny),
+                       selected= unique(Palm_data()$Parameter$Progeny))
+  })
+
+  # Filter the data according to prog_filt (output$progeny_filt):
+  Palm_data_filt= reactive({
+    lapply(Palm_data(), function(x){
+      if(is.data.frame(x)){
+        x[x$Progeny%in%input$prog_filt,]
+      }else{
+        x
+      }
+    })
+  }) 
+
   output$data=
     renderDataTable({
-      Palm_data()$Parameter
+      Palm_data_filt()$Parameter
     }, options = list(pageLength = 5))
+  
+  output$data_filt_trigger= 
+    renderText({
+      if(!is.null(Palm_data_filt())){
+      is_data= 
+        lapply(Palm_data_filt()[-grep("MAP_requested",names(Palm_data_filt()))],nrow)%>%
+        unlist
+      }else{
+        is_data=1
+      }
+      if(any(is_data<1)){
+        nodata= names(is_data[is_data<1])
+        # showNotification(paste("Missing data for selected Progenies"))
+        # "notok"
+        paste(nodata, collapse= ", ")
+      }else{
+        "ok"
+      }
+    })
+  outputOptions(output, "data_filt_trigger", suspendWhenHidden = FALSE)
+  
   
   mods= 
     eventReactive(input$updatearchi, {
       # updateSliderInput(session, "map", value = input$map, min = min(Palm_data()$Parameter$MAP),
       #                   max = max(Palm_data()$Parameter$MAP))
-      if(!is.null(Palm_data()$Parameter)){
+      if(!is.null(Palm_data_filt()$Parameter)){
         # Create a Progress object
         progress_obj <- shiny::Progress$new()
         progress_obj$set(message = "Computing data", value = 0)
         # Close the progress when this reactive exits (even if there's an error)
         on.exit(progress_obj$close())
-        
+
         # Fit the models on data:
-        models= mod_all(x= Palm_data(), progress = 
+        models= mod_all(x= Palm_data_filt(), progress = 
                           function(x){
                             updateProgress(detail = x, progress_obj = progress_obj,
                                            steps= 21)})
@@ -113,6 +156,7 @@ server <- function(input, output, session) {
       }
       models
     })
+  
   output$modout=
     renderText({
       is(mods()) # trigger when mods is created
@@ -181,13 +225,6 @@ server <- function(input, output, session) {
     selectInput(inputId = 'prog', 'Progeny', 
                 c("All progenies","Average progeny",unique(Palm_Param()$input$Parameter$Progeny)))
   })
-  
-  output$scenepar=
-    reactive({
-      paste(c(names(Palm_Param()), ifelse(is.na(input$nbtrees),0,input$nbtrees),
-              input$nleaves,
-              input$prog,input$plant_dist,ifelse(is.null(input$planting_design),"NULL","other")))
-    })
   
   scenes= 
     eventReactive(

@@ -87,12 +87,13 @@ ui <- navbarPage(
              hr(),
              tags$ul(
                tags$li(
-                 h3("Please choose the desired palm age:"),
+                 h3("Please choose the desired palm age for the data import:"),
                  sliderInput("map",
                              "Desired palm age in months after planting:",
                              min = 1,
                              max = 47,
-                             value = 47)
+                             value = 47),
+                 p("Data will be prepared with the desired palm age +/- 20 months")
                ),
                tags$li(
                  hr(),
@@ -156,8 +157,25 @@ ui <- navbarPage(
                        condition = 'output.data_trigger == "ok"',
                        br(),
                        p("Data successfully imported !")
+                     ),
+                     conditionalPanel(
+                       condition = 'output.data_trigger == "notok"',
+                       br(),
+                       p("Data could not be imported: please change the desired palm age.")
                      )
                    )
+                 )
+               ),
+               conditionalPanel(
+                 condition = 'output.data_trigger == "ok"',
+                 tags$li(
+                   hr(),
+                   h3("Filter the progenies"),
+                   # Option to filter the progenies from the imported data:
+                   p("You can compute the parameters for all progenies in the data, or ",
+                     "for some progenies only."),
+                   uiOutput('progeny_filt'),
+                   p("By default, VPalm will compute the parameters for all progenies at once.")
                  )
                ),
                conditionalPanel(
@@ -170,12 +188,22 @@ ui <- navbarPage(
                  )
                ),
                conditionalPanel(
-                 condition = 'output.data_trigger == "ok"',
+                 condition = 'output.data_filt_trigger != "ok" & output.data_filt_trigger != null',
+                 wellPanel(
+                   h3("Warning: missing data for selected progenies", style= 'color:red'),
+                   p('Unable to compute architectural parameters.'),
+                   p("Missing data for:", textOutput("data_filt_trigger")),
+                   # p(textOutput("data_filt_trigger")),
+                   p("Parameters can be fitted using another progeny data by adding it to the selection.")
+                 )
+               ),
+               conditionalPanel(
+                 condition = 'output.data_trigger == "ok" & output.data_filt_trigger == "ok"',
                  tags$li(
                    hr(),
                    h3("Compute the parameters (can take some time)"),
-                   p("Now that you have imported the data files, compute the parameters",
-                     "by clicking the following button:"),
+                   p("Now that you have imported the data files and possibly filtered the progenies,",
+                     " you can compute the parameters by clicking the following button:"),
                    actionButton("updatearchi", "Update Architectural parameters"),
                    p(textOutput("modout"))
                  )
@@ -267,7 +295,6 @@ ui <- navbarPage(
                em("Hint: Always check if the design of the plot correspond to the one you inputed")
              )
            ),
-           p(textOutput("scenepar")),
            h3("Compute the scene"),
            actionButton("makescene", "Make the scene"),
            br(),
