@@ -81,13 +81,17 @@ server <- function(input, output, session) {
   # trigger the display of the Parameter data.frame from the data just read (for control):
   output$data_trigger= 
     renderText({
-      if(!is.null(Palm_data()$Parameter)&&is.data.frame(Palm_data()$Parameter)&&
-         nrow(Palm_data()$Area)>0){
-        showNotification("Data successfully imported")
-        'ok'
+      if(!is.null(Palm_data()$Parameter)){
+        if(is.data.frame(Palm_data()$Parameter)&&
+           nrow(Palm_data()$Area)>0){
+          showNotification("Data successfully imported")
+          'ok'
+        }else{
+          showNotification("Given MAP does not yield enough data")
+          'notok'
+        }
       }else{
-        showNotification("Given MAP does not yield enough data")
-        'notok'
+        'notyet'
       }
     })
   outputOptions(output, "data_trigger", suspendWhenHidden = FALSE)  
@@ -97,7 +101,7 @@ server <- function(input, output, session) {
                        choices = unique(Palm_data()$Parameter$Progeny),
                        selected= unique(Palm_data()$Parameter$Progeny))
   })
-
+  
   # Filter the data according to prog_filt (output$progeny_filt):
   Palm_data_filt= reactive({
     lapply(Palm_data(), function(x){
@@ -108,7 +112,7 @@ server <- function(input, output, session) {
       }
     })
   }) 
-
+  
   output$data=
     renderDataTable({
       Palm_data_filt()$Parameter
@@ -117,9 +121,9 @@ server <- function(input, output, session) {
   output$data_filt_trigger= 
     renderText({
       if(!is.null(Palm_data_filt())){
-      is_data= 
-        lapply(Palm_data_filt()[-grep("MAP_requested",names(Palm_data_filt()))],nrow)%>%
-        unlist
+        is_data= 
+          lapply(Palm_data_filt()[-grep("MAP_requested",names(Palm_data_filt()))],nrow)%>%
+          unlist
       }else{
         is_data=1
       }
@@ -137,15 +141,16 @@ server <- function(input, output, session) {
   
   mods= 
     eventReactive(input$updatearchi, {
-      # updateSliderInput(session, "map", value = input$map, min = min(Palm_data()$Parameter$MAP),
-      #                   max = max(Palm_data()$Parameter$MAP))
+      # updateSliderInput(session, "map", value = input$map,
+      #                   min = min(Palm_data_filt()$Parameter$MAP),
+      #                   max = max(Palm_data_filt()$Parameter$MAP))
       if(!is.null(Palm_data_filt()$Parameter)){
         # Create a Progress object
         progress_obj <- shiny::Progress$new()
         progress_obj$set(message = "Computing data", value = 0)
         # Close the progress when this reactive exits (even if there's an error)
         on.exit(progress_obj$close())
-
+        
         # Fit the models on data:
         models= mod_all(x= Palm_data_filt(), progress = 
                           function(x){
@@ -164,7 +169,7 @@ server <- function(input, output, session) {
     })
   
   Palm_Param_computed= reactive({
-    list(input= isolate(Palm_data()), model= mods())
+    list(input= isolate(Palm_data_filt()), model= mods())
   })
   
   # Find the right Palm_Param_* according to the choices of the user  ---------
@@ -222,8 +227,14 @@ server <- function(input, output, session) {
   # Page 2: Call VPalm and build OPF/OPS files ------------------------------
   
   output$progeny = renderUI({
-    selectInput(inputId = 'prog', 'Progeny', 
-                c("All progenies","Average progeny",unique(Palm_Param()$input$Parameter$Progeny)))
+    Progs= unique(Palm_Param()$input$Parameter$Progeny)
+    Progs_choices= 
+      if(length(Progs)>1){
+        c("All progenies","Average progeny",Progs)  
+      }else{
+        Progs  
+      }
+    selectInput(inputId = 'prog', 'Progeny', Progs_choices)
   })
   
   scenes= 
