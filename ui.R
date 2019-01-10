@@ -1,4 +1,4 @@
-pack= c('shiny','ggplot2','ggimage','dplyr')
+pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){
     install.packages(x, repos= "https://cloud.r-project.org")  
@@ -101,22 +101,48 @@ ui <- navbarPage(
                  p("Two ways are provided to import the",
                    "data: import them from the default location in the Shiny app (left)",
                    strong("or"),"load each file separately (right)."),
-                 selectInput("load", "Choose here:", c(" ","Load data from default folder",
+                 selectInput("load", "Choose here:", c(" ",
+                                                       "Load data from folder",
+                                                       "Load data from default folder",
                                                        'Load each file separately'),
                              selected = " ",
                              multiple = FALSE),
                  fluidRow(
                    wellPanel(
                      conditionalPanel(
+                       condition = 'input.load == "Load data from folder"',
+                       h2("Load data from local folder"),
+                       p("Please choose the folder were the files resides:"),
+                       shinyDirButton("dirdata", "Choose data folder", "Data folder"),
+                       textOutput("data_path_info1"),
+                       textOutput("data_path_info2"),
+                       verbatimTextOutput("data_path_info3")
+                     ),
+                     # conditionalPanel(
+                     #   condition = 'output.data_path_trigger == "ok"',
+                     #   br(),
+                     #   p("Here is the folder you chose:"),
+                     #   verbatimTextOutput("dir_data"), br(),
+                     #   p("Here is a list of the data in the folder:"),
+                     #   verbatimTextOutput("files_data"), br(),
+                     #   br(),
+                     #   p("Importing the files using",code("Vpalmr::import_data"),":")
+                     # ),
+                     
+                     conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
-                       
                        h2("Load data from local default file location"),
                        p("The default file location is '1-Data/Archi' in the Shiny application."),
-                       p(textOutput("architecture1", container = span)),
+                       p(textOutput("architecture1", container = span))
+                     ), 
+                     # Button to trigger data load from folder (default or user-specified):
+                     conditionalPanel(
+                       condition = 'input.load == "Load data from folder" | input.load == "Load data from default folder"',
                        br(),
                        p("Import the files using",code("Vpalmr::import_data"),":"),
-                       actionButton("load_data_default", label = "Load data")
+                       actionButton("load_data_folder", label = "Load data")
                      ),
+                     # Load each file separately:
                      conditionalPanel(
                        condition = 'input.load == "Load each file separately"',
                        h2("Load data from files:"),
@@ -247,6 +273,9 @@ ui <- navbarPage(
            ),
            p("Some parameters are needed to compute the 3D palm scenes:",
              tags$ul(
+               tags$li("The directory where to write the outputs. Two folders are created on this diretory:",
+                       "The Vpalm inputs folder, which contains the parameters values for each palm tree input",
+                       "of VPalm ; and the scene folder, where the OPS and OPF files are written."),
                tags$li("The number of leaves of the 3D mock-up. Palms in the field have generally
                        45 leaves because leaves with rank greater than 45 are selectively pruned 
                        as a consequence of the harvest."),
@@ -268,6 +297,10 @@ ui <- navbarPage(
              ),
              "Note that these parameters should be used only by experienced users."
            ),
+           # Folder where to write the outputs:
+           p("Folder of destination:"),
+           shinyDirButton("dir", "Choose destination folder", "VPalm inputs and outputs folder"),
+           verbatimTextOutput("dir"), br(),
            # Number of leaves for the mock-up:
            numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
                         value = 45, min = 3, max = 100, step = 1),
@@ -278,9 +311,13 @@ ui <- navbarPage(
                         value = 9.2, min = 1, max = 100, step = 0.01),
            
            # Advanced parameters:
-           p("You can trigger advanced parameters if you need tehm, but please remember they should be
-             used by advanced users only:"),
-           actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
+           p("You can trigger advanced parameters if you need them, but please remember they should be
+             used by advanced users only."),
+           # actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
+           p(strong("Trigger advanced parameters")),
+           actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle "),
+                        style= "color:white; 
+                       background-color: #E31F1F"),
            conditionalPanel(
              condition = 'input.advanced_param_button%2==1',
              wellPanel(
@@ -296,32 +333,46 @@ ui <- navbarPage(
              )
            ),
            h3("Compute the scene"),
-           actionButton("makescene", "Make the scene"),
-           br(),
+           actionButton("makescene", "Make the scene",style = "color: white; 
+                       background-color: #088A08"),
+           # Output the folders paths where the scene and Vpal inputs were written:
+           conditionalPanel(
+             condition = 'output.scene_trigger == "ok"',
+             hr(),
+             h4("Scene successfully created and written"),
+             textOutput("dir_vpalm_inputs"),
+             br(),
+             textOutput("dir_scenes"), br(),
+             hr()
+           ),
            h3("Plot of the stand design"),
-           p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
+           actionButton(inputId = "plot_button",label = "Show/Hide plots"),
+           conditionalPanel(
+             condition = 'input.plot_button%2==1',
+             p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
               the scene precisely because the size of the palms is arbitrary. Please open the scene in Xplot to get
               the true dimensions."),
-           p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
-           numericInput(inputId = "palm_size", 
-                        label = "",
-                        value = 0.4, min = 0.01, max = 10, step = 0.01),
-           plotOutput("plot_design", width= 600, height = 600,
-                      click = "plot_click",
-                      hover = "plot_hover",
-                      brush = "plot_brush"
-           ),
-           verbatimTextOutput("plot_info"),
-           p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
-           numericInput(inputId = "voronois", 
-                        label = "How many voronoïs in col and rows ?",
-                        value = 3, min = 1, max = 20, step = 1),
-           plotOutput("plot_design_rep", width= 1200, height = 1200,
-                      click = "plot_click_rep",
-                      hover = "plot_hover_rep",
-                      brush = "plot_brush_rep"
-           ),
-           verbatimTextOutput("plot_info_rep")       
+             p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
+             numericInput(inputId = "palm_size", 
+                          label = "",
+                          value = 0.4, min = 0.01, max = 10, step = 0.01),
+             plotOutput("plot_design", width= 600, height = 600,
+                        click = "plot_click",
+                        hover = "plot_hover",
+                        brush = "plot_brush"
+             ),
+             verbatimTextOutput("plot_info"),
+             p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
+             numericInput(inputId = "voronois", 
+                          label = "How many voronoïs in col and rows ?",
+                          value = 3, min = 1, max = 20, step = 1),
+             plotOutput("plot_design_rep", width= 1200, height = 1200,
+                        click = "plot_click_rep",
+                        hover = "plot_hover_rep",
+                        brush = "plot_brush_rep"
+             ),
+             verbatimTextOutput("plot_info_rep")
+           )
   )
 )
 

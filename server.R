@@ -16,21 +16,69 @@ server <- function(input, output, session) {
     })
   
   
-  # Or read the inputs from local folder:
-  Palm_data_default=
-    eventReactive(input$load_data_default, {
-      data_path= file.path(getwd(), "1-Data/Archi")
+  # Or read the inputs local folder or files:
+  
+  # Find the right Palm_data_* according to the choices of the user  ---------------
+  # NB: choices are either loading from default folder, loading from user-chosen folder,
+  # or by uploading each files separately.
+  
+  Palm_data= reactive({
+    switch(input$load,
+           "Load data from default folder" = Palm_data_folder(),
+           "Load data from folder" = Palm_data_folder(),
+           "Load each file separately" = Palm_data_files())
+  }) 
+  
+  volumes_data= c(Home = fs::path_home(), getVolumes()(), WD= getwd(),
+                  "R Installation" = R.home())
+  shinyDirChoose(input, "dirdata", roots = volumes_data, session = session,
+                 restrictions = system.file(package = "base"))
+  dir_data= reactive(input$dirdata)
+  
+  # Files in the data folder:
+  output$files_data= renderPrint(list.files(parseDirPath(volumes_data,dir_data())))
+  output$dir_data= renderPrint({
+    parseDirPath(volumes_data, dir_data())
+  })
+  
+  # Display info about the user-defined path to the data:
+  observeEvent(input$dirdata, {
+    output$data_path_info1= renderText({
+      paste("Here is the folder you chose:",
+            parseDirPath(volumes_data, dir_data()))
+    })
+    output$data_path_info2= renderText({
+      "Here is a list of the data in the folder:"
+    })
+    output$data_path_info3= renderPrint({
+      list.files(parseDirPath(volumes_data,dir_data()))
+    })
+  })
+
+  # If import from folder, either use the default path, or one specified by the user:
+  folder_path=
+    reactive({
+      if(input$load == "Load data from default folder"){
+        file.path(getwd(), "1-Data/Archi")  
+      }else{
+        parseDirPath(volumes_data, dir_data())
+      }
+    }) 
+  
+  Palm_data_folder=
+    eventReactive(input$load_data_folder, {
+      dir_path= folder_path()
       data_path=
         list(
-          parameter= file.path(data_path,'ParameterSimu.csv'),
-          development= file.path(data_path,'Development_Rep4_SMSE.csv'),
-          phylotaxy= file.path(data_path,'Stem_SMSE14.csv'),
-          declination= file.path(data_path,'AnglesC&A_SMSE_Nov14.csv'),
-          curvature= file.path(data_path,'LeafCurvature_SMSE14.csv'),
-          leaf_area= file.path(data_path,'LeafArea_monitoring_SMSE.csv'),
-          axial_angle= file.path(data_path,'LeafDispositionComp_SMSE14.csv'),
-          petiole_width= file.path(data_path,'Petiole_SMSE14.csv'),
-          twist= file.path(data_path,'Torsion_SMSE14.csv')
+          parameter= file.path(dir_path,'ParameterSimu.csv'),
+          development= file.path(dir_path,'Development_Rep4_SMSE.csv'),
+          phylotaxy= file.path(dir_path,'Stem_SMSE14.csv'),
+          declination= file.path(dir_path,'AnglesC&A_SMSE_Nov14.csv'),
+          curvature= file.path(dir_path,'LeafCurvature_SMSE14.csv'),
+          leaf_area= file.path(dir_path,'LeafArea_monitoring_SMSE.csv'),
+          axial_angle= file.path(dir_path,'LeafDispositionComp_SMSE14.csv'),
+          petiole_width= file.path(dir_path,'Petiole_SMSE14.csv'),
+          twist= file.path(dir_path,'Torsion_SMSE14.csv')
         )
       data_path$map= input$map
       Inputs=
@@ -45,8 +93,8 @@ server <- function(input, output, session) {
       Inputs
     })
   
-  
-  Palm_data_import=
+  # Or read the inputs from user-inputed files:
+  Palm_data_files=
     eventReactive(
       input$submit_upload,
       {
@@ -67,16 +115,6 @@ server <- function(input, output, session) {
             message(out)
           })
       })
-  
-  # Find the right Palm_data_* according to the choices of the user  ---------------
-  # NB: choices are either loading from default folder or by uploading custom files
-  Palm_data= reactive({
-    switch(input$load,
-           "Load data from default folder" = Palm_data_default(),
-           "Load each file separately" = Palm_data_import())
-  }) 
-  
-  
   
   # trigger the display of the Parameter data.frame from the data just read (for control):
   output$data_trigger= 
@@ -214,15 +252,11 @@ server <- function(input, output, session) {
   output$downloadData= downloadHandler(
     filename = function() {
       paste0("models_MAP_",input$map,".RData")
-      # "model.RData"
     },
     content = function(file) {
       saveRDS(Palm_Param(), file)
-      # message("Data and models were successfully written in: ", file)
     }
   )
-  
-  
   
   # Page 2: Call VPalm and build OPF/OPS files ------------------------------
   
@@ -237,6 +271,24 @@ server <- function(input, output, session) {
     selectInput(inputId = 'prog', 'Progeny', Progs_choices)
   })
   
+  # directory where to write the outputs:
+  volumes= c(Home = fs::path_home(), getVolumes()(), WD= getwd(), "R Installation" = R.home())
+  
+  shinyDirChoose(input, "dir", roots = volumes, session = session, restrictions = system.file(package = "base"))
+  dir= reactive(input$dir)
+  output$dir= renderPrint({
+    parseDirPath(volumes, input$dir)
+  })
+  # Make the output paths available for ui for display as information:
+  output$dir_vpalm_inputs= renderText({
+    paste("Vpalm input files written in:",
+          file.path(parseDirPath(volumes, input$dir),"VPalm_inputs"))
+  })
+  output$dir_scenes= renderText({
+    paste("Vpalm output files (OPS and OPF files) written in:",
+          file.path(parseDirPath(volumes, input$dir),"scenes"))
+  })
+  
   scenes= 
     eventReactive(
       input$makescene,
@@ -249,7 +301,7 @@ server <- function(input, output, session) {
           scene= 
             Vpalmr::make_scene(data = Palm_Param(),
                                nleaves = input$nleaves,
-                               path = file.path(getwd(), "3-Outputs"), 
+                               path = parseDirPath(volumes, dir()), 
                                Progeny = 
                                  if(input$prog=="All progenies"){
                                    NULL
@@ -272,10 +324,17 @@ server <- function(input, output, session) {
         scene
       })
   
+  # trigger the display of the paths where the outputs were written:
+  output$scene_trigger= 
+    renderText({
+      ifelse(!is.null(scenes()),'ok','notok')
+    })
+  outputOptions(output, "scene_trigger", suspendWhenHidden = FALSE) 
+  
+  
   observeEvent(scenes(), {
     showNotification("Scene successfully created and written")
   })
-  
   
   output$plot_design <- renderPlot({
     plot_design= scenes()$plot_design
