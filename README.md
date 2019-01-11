@@ -27,6 +27,7 @@ npm install
 # Run the app
 npm start
 ```
+The installation adds a new folder called `node_modules` into your project.
 
 ## Build
 If the app is running with no issue, then you can build the electron application:
