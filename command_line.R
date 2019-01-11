@@ -24,12 +24,23 @@ Palm_Param= readRDS(file = "3-Outputs/models_MAP_47.RData")
 #                   plant_dist = plant_dist)
 
 scene= make_scene(data = Palm_Param, ntrees = 4, nleaves = 45, 
-                  path = "3-Outputs/Tests",Progeny = "DA1",
-                  AMAPStudio = getwd(),
+                  path = "3-Outputs/tests2",Progeny = "DA1",
+                  AMAPStudio = getwd(),seed = 5:8,
                   plant_dist = plant_dist)
 
 
+map= 47
+plant_dist= 9.2
 plot_design= NULL
 overwrite= T
-seed= NULL
+seed = 1:4
 progress= NULL
+ntrees = 4
+data = Palm_Param
+nleaves = 45
+path = "3-Outputs/Tests"
+Progeny = "DA1"
+AMAPStudio = getwd()
+
+
+

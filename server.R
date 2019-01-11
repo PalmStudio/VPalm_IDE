@@ -276,11 +276,13 @@ server <- function(input, output, session) {
   
   shinyDirChoose(input, "dir", roots = volumes, session = session, restrictions = system.file(package = "base"))
   dir= reactive(input$dir)
+  
   output$dir= renderPrint({
     parseDirPath(volumes, input$dir)
   })
-  output$vols= renderPrint({
-    volumes
+  
+  output$dirtrigger= renderText({
+    if(isTruthy(dir())){"Here is the folder you chose for the outputs:"}else{""}
   })
   
   # Make the output paths available for ui for display as information:
@@ -370,10 +372,10 @@ server <- function(input, output, session) {
       ggplot(aes(x= x, y= y))+
       geom_image(aes(image= image), size= input$palm_size)+
       geom_point(aes(color= "Palm tree center"))+
-      ylim(low= unique(plot_design$ymin),
-           high= unique(plot_design$ymax))+
-      xlim(low= unique(plot_design$xmin),
-           high= unique(plot_design$xmax))+
+      ylim(low= min(unique(plot_design$ymin)),
+           high= max(unique(plot_design$ymax)))+
+      xlim(low= min(unique(plot_design$xmin)),
+           high= max(unique(plot_design$xmax)))+
       labs(colour = "")+
       theme(legend.position="bottom")
   })
