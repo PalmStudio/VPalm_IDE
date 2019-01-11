@@ -301,6 +301,7 @@ ui <- navbarPage(
            p("Folder of destination:"),
            shinyDirButton("dir", "Choose destination folder", "VPalm inputs and outputs folder"),
            verbatimTextOutput("dir"), br(),
+           verbatimTextOutput("vols"), br(),
            # Number of leaves for the mock-up:
            numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
                         value = 45, min = 3, max = 100, step = 1),

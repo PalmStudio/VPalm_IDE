@@ -279,6 +279,10 @@ server <- function(input, output, session) {
   output$dir= renderPrint({
     parseDirPath(volumes, input$dir)
   })
+  output$vols= renderPrint({
+    volumes
+  })
+  
   # Make the output paths available for ui for display as information:
   output$dir_vpalm_inputs= renderText({
     paste("Vpalm input files written in:",
@@ -301,7 +305,12 @@ server <- function(input, output, session) {
           scene= 
             Vpalmr::make_scene(data = Palm_Param(),
                                nleaves = input$nleaves,
-                               path = parseDirPath(volumes, dir()), 
+                               path = 
+                                 if(length(parseDirPath(dir())>0)){
+                                   parseDirPath(volumes, dir())
+                                 }else{
+                                   parseDirPath(volumes, dir())
+                                 }, 
                                Progeny = 
                                  if(input$prog=="All progenies"){
                                    NULL
