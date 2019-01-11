@@ -285,6 +285,11 @@ server <- function(input, output, session) {
     if(isTruthy(dir())){"Here is the folder you chose for the outputs:"}else{""}
   })
   
+  output$dirtrigger2= 
+    renderText({
+      if(isTruthy(dir())){"Now you can set the parameters:"}else{""}
+    })
+  
   # Make the output paths available for ui for display as information:
   output$dir_vpalm_inputs= renderText({
     paste("Vpalm input files written in:",
@@ -309,7 +314,11 @@ server <- function(input, output, session) {
   })
   
   seeds= reactive(
-    as.numeric(unlist(strsplit(input$seed,",")))
+    if(isTruthy(input$seed)){
+      as.numeric(unlist(strsplit(input$seed,",")))  
+    }else{
+      NULL
+    }
   )
   
   scenes= 

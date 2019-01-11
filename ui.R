@@ -297,95 +297,109 @@ ui <- navbarPage(
              ),
              "Note that these parameters should be used only by experienced users."
            ),
-           # Folder where to write the outputs:
-           p("Folder of destination:"),
-           shinyDirButton("dir", "Choose destination folder", "VPalm inputs and outputs folder"),
-           textOutput("dirtrigger"),
            conditionalPanel(
-             condition = 'output.dirtrigger == "Here is the folder you chose for the outputs:"',
-             verbatimTextOutput("dir")
-           ),
-           br(),
-           
-           # Number of leaves for the mock-up:
-           numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
-                        value = 45, min = 3, max = 100, step = 1),
-           # Progeny:
-           uiOutput('progeny'),
-           # Plant distance:
-           numericInput(inputId = "plant_dist", label = "Distance between palm trees in the scene",
-                        value = 9.2, min = 1, max = 100, step = 0.01),
-           
-           # Advanced parameters:
-           p("You can trigger advanced parameters if you need them, but please remember they should be
-             used by advanced users only."),
-           # actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
-           p(strong("Trigger advanced parameters")),
-           actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle "),
-                        style= "color:white; 
-                       background-color: #E31F1F"),
-           conditionalPanel(
-             condition = 'input.advanced_param_button%2==1',
+             condition = 'output.param_trigger == "notok"',
              wellPanel(
-               p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe 
-               use randomly generated palm trees for each progeny instead of the average one ?"),
-               fluidRow(
-                 column(6,
-                        fileInput("planting_design", label= "Custom planting design"),
-                        em("Hint: Always check if the design of the plot correspond to the one you inputed")
-                 ),
-                 column(6, numericInput(inputId = "nbtrees", 
-                                        label = "Number of random trees",
-                                        value = 0, min = 1, max = 100, step = 1))
-               ),
-               br(),
-               fluidRow(
-                 p("If you need to set a random seed, set a comma separated vector of length equal to the",
-                   "number of trees required."),
-                 textInput('seed', 'Enter a vector of seeds (comma delimited)')
-               )
+               h3("Warning: you must compute or import data first (see previous page) ", style= 'color:red'),
+               p('Unable to find architectural parameters. Please import/compute them using the previous page.')
              )
            ),
-           h3("Compute the scene"),
-           actionButton("makescene", "Make the scene",style = "color: white; 
-                       background-color: #088A08"),
-           # Output the folders paths where the scene and Vpal inputs were written:
            conditionalPanel(
-             condition = 'output.scene_trigger == "ok"',
-             hr(),
-             h4("Scene successfully created and written"),
-             textOutput("dir_vpalm_inputs"),
+             condition = 'output.param_trigger == "ok"',
+             # Folder where to write the outputs:
+             p("Folder of destination:"),
+             shinyDirButton("dir", "Choose destination folder", "VPalm inputs and outputs folder"),
+             textOutput("dirtrigger"),
+             conditionalPanel(
+               condition = 'output.dirtrigger == "Here is the folder you chose for the outputs:"',
+               verbatimTextOutput("dir")
+             ),
              br(),
-             textOutput("dir_scenes"), br(),
-             hr()
-           ),
-           h3("Plot of the stand design"),
-           actionButton(inputId = "plot_button",label = "Show/Hide plots"),
-           conditionalPanel(
-             condition = 'input.plot_button%2==1',
-             p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
+             textOutput("dirtrigger2"),
+             conditionalPanel(
+               condition = 'output.dirtrigger2 == "Now you can set the parameters:"',
+               
+               # Number of leaves for the mock-up:
+               numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
+                            value = 45, min = 3, max = 100, step = 1),
+               # Progeny:
+               uiOutput('progeny'),
+               # Plant distance:
+               numericInput(inputId = "plant_dist", label = "Distance between palm trees in the scene",
+                            value = 9.2, min = 1, max = 100, step = 0.01),
+               
+               # Advanced parameters:
+               p("You can trigger advanced parameters if you need them, but please remember they should be
+             used by advanced users only."),
+               # actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
+               p(strong("Trigger advanced parameters")),
+               actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle "),
+                            style= "color:white; 
+                       background-color: #E31F1F"),
+               conditionalPanel(
+                 condition = 'input.advanced_param_button%2==1',
+                 wellPanel(
+                   p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe 
+               use randomly generated palm trees for each progeny instead of the average one ?"),
+                   fluidRow(
+                     column(6,
+                            fileInput("planting_design", label= "Custom planting design"),
+                            em("Hint: Always check if the design of the plot correspond to the one you inputed")
+                     ),
+                     column(6, numericInput(inputId = "nbtrees", 
+                                            label = "Number of random trees",
+                                            value = 0, min = 1, max = 100, step = 1))
+                   ),
+                   br(),
+                   fluidRow(
+                     p("If you need to set a random seed, set a comma separated vector of length equal to the",
+                       "number of trees required."),
+                     textInput('seed', 'Enter a vector of seeds (comma delimited)')
+                   )
+                 )
+               ),
+               h3("Compute the scene"),
+               actionButton("makescene", "Make the scene",style = "color: white; 
+                       background-color: #088A08"),
+               # Output the folders paths where the scene and Vpal inputs were written:
+               conditionalPanel(
+                 condition = 'output.scene_trigger == "ok"',
+                 hr(),
+                 h4("Scene successfully created and written"),
+                 textOutput("dir_vpalm_inputs"),
+                 br(),
+                 textOutput("dir_scenes"), br(),
+                 hr()
+               ),
+               h3("Plot of the stand design"),
+               actionButton(inputId = "plot_button",label = "Show/Hide plots"),
+               conditionalPanel(
+                 condition = 'input.plot_button%2==1',
+                 p("Here is a plot of the planting design. Note that this plot is informative only and do not represent
               the scene precisely because the size of the palms is arbitrary. Please open the scene in Xplot to get
               the true dimensions."),
-             p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
-             numericInput(inputId = "palm_size", 
-                          label = "",
-                          value = 0.4, min = 0.01, max = 10, step = 0.01),
-             plotOutput("plot_design", width= 600, height = 600,
-                        click = "plot_click",
-                        hover = "plot_hover",
-                        brush = "plot_brush"
-             ),
-             verbatimTextOutput("plot_info"),
-             p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
-             numericInput(inputId = "voronois", 
-                          label = "How many voronoïs in col and rows ?",
-                          value = 3, min = 1, max = 20, step = 1),
-             plotOutput("plot_design_rep", width= 1200, height = 1200,
-                        click = "plot_click_rep",
-                        hover = "plot_hover_rep",
-                        brush = "plot_brush_rep"
-             ),
-             verbatimTextOutput("plot_info_rep")
+                 p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
+                 numericInput(inputId = "palm_size", 
+                              label = "",
+                              value = 0.4, min = 0.01, max = 10, step = 0.01),
+                 plotOutput("plot_design", width= 600, height = 600,
+                            click = "plot_click",
+                            hover = "plot_hover",
+                            brush = "plot_brush"
+                 ),
+                 verbatimTextOutput("plot_info"),
+                 p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
+                 numericInput(inputId = "voronois", 
+                              label = "How many voronoïs in col and rows ?",
+                              value = 3, min = 1, max = 20, step = 1),
+                 plotOutput("plot_design_rep", width= 1200, height = 1200,
+                            click = "plot_click_rep",
+                            hover = "plot_hover_rep",
+                            brush = "plot_brush_rep"
+                 ),
+                 verbatimTextOutput("plot_info_rep")
+               )
+             )
            )
   )
 )
