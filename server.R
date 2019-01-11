@@ -54,7 +54,7 @@ server <- function(input, output, session) {
       list.files(parseDirPath(volumes_data,dir_data()))
     })
   })
-
+  
   # If import from folder, either use the default path, or one specified by the user:
   folder_path=
     reactive({
@@ -293,6 +293,23 @@ server <- function(input, output, session) {
           file.path(parseDirPath(volumes, input$dir),"scenes"))
   })
   
+  # Update the initial (default) seed value according to the number of trees.
+  
+  observeEvent(input$nbtrees, {
+    updateTextInput(session, "seed", 
+                    value = 
+                      if(input$nbtrees==0|!isTruthy(input$nbtrees)){
+                        NULL
+                      }else{
+                        paste(1:input$nbtrees, collapse = ",")
+                      }
+    )
+  })
+  
+  seeds= reactive(
+    as.numeric(unlist(strsplit(input$seed,",")))
+  )
+  
   scenes= 
     eventReactive(
       input$makescene,
@@ -306,7 +323,7 @@ server <- function(input, output, session) {
             Vpalmr::make_scene(data = Palm_Param(),
                                nleaves = input$nleaves,
                                path = 
-                                 if(length(parseDirPath(dir())>0)){
+                                 if(length(parseDirPath(volumes, dir())>0)){
                                    parseDirPath(volumes, dir())
                                  }else{
                                    parseDirPath(volumes, dir())
@@ -322,6 +339,7 @@ server <- function(input, output, session) {
                                AMAPStudio = getwd(),
                                ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
                                plant_dist = input$plant_dist,
+                               seed= if(is.na(input$nbtrees)){NULL}else{seeds()},
                                progress = function(x){
                                  updateProgress(detail = x, progress_obj = progress_obj,
                                                 steps = 7) 

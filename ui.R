@@ -325,12 +325,20 @@ ui <- navbarPage(
                p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe 
                use randomly generated palm trees for each progeny instead of the average one ?"),
                fluidRow(
-                 column(6,fileInput("planting_design", label= "Custom planting design")),
+                 column(6,
+                        fileInput("planting_design", label= "Custom planting design"),
+                        em("Hint: Always check if the design of the plot correspond to the one you inputed")
+                 ),
                  column(6, numericInput(inputId = "nbtrees", 
                                         label = "Number of random trees",
                                         value = 0, min = 1, max = 100, step = 1))
                ),
-               em("Hint: Always check if the design of the plot correspond to the one you inputed")
+               br(),
+               fluidRow(
+                 p("If you need to set a random seed, set a comma separated vector of length equal to the",
+                   "number of trees required."),
+                 textInput('seed', 'Enter a vector of seeds (comma delimited)')
+               )
              )
            ),
            h3("Compute the scene"),
