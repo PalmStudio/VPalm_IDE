@@ -47,3 +47,9 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+# Electron associated folders and files:
+node_modules
+VPalm_IDE
+package-lock.json
+R-Portable

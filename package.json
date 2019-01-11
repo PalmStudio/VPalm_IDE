@@ -1,0 +1,30 @@
+{
+  "name": "VPalm-IDE",
+  "version": "1.0.0",
+  "description": "A simple IDE for VPalm and VPalmr to make virtual palm plants from field data",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=cc.ico --out=VPalm_IDE",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --icon=cc.ico --out=VPalm_IDE --version-string.CompanyName=CIRAD --version-string.FileDescription=CE --version-string.ProductName=\"VPalm IDE: Shiny Electron App\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+  },
+  "repository": "https://github.com/VEZY/VPalm_app",
+  "keywords": [
+    "VPalm",
+    "VPalmr",
+    "Palm",
+    "architecture",
+    "3D",
+    "electron"
+  ],
+  "contributors": [
+    "Rémi Vezy <remi.vezy@cirad.fr> (https://remi-vezy.netlify.com/)",
+    "Raphaël P.A. Perez <raphael.perez@cirad.fr>",
+    "Jean Dauzat <jean.dauzat@cirad.fr>"
+  ],
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  }
+}
