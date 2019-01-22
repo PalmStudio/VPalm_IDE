@@ -1,5 +1,5 @@
 {
-  "name": "VPalm-IDE",
+  "name": "VPalm_IDE",
   "version": "1.0.0",
   "description": "A simple IDE for VPalm and VPalmr to make virtual palm plants from field data",
   "main": "main.js",
@@ -25,6 +25,7 @@
   ],
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "~1.6.2"
+    "electron": "~1.6.2",
+    "electron-winstaller": "^2.7.0"
   }
 }

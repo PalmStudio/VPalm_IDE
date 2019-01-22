@@ -58,30 +58,26 @@ Share
 
 You can share the application just by copy/pasting it into a USB key or by deploying it on the cloud. You might want to compress it beforehand though.
 
-Custom design
--------------
+Build Windows installer
+-----------------------
 
-To add a custom design into the VPalm app, you should follow the format of `design_plot()`. For example for 2 rows of 2 palm trees in quincunx (*i.e.* 4 palms), we call `design_plot()` as follows:
+To build windows installer, we use the [windows-installer app](https://github.com/electron/windows-installer). Simply follow these instructions to build it:
 
-``` r
-library(Vpalmr)
-design_plot(rows = 2, cols = 1, x_dist = 9.2)
+Install the package if not already done:
+
+``` bash
+ npm install --save-dev electron-winstaller
 ```
 
-This yields a formatted table as:
+And build the installer using node:
 
-|     x|          y|  xmax|      ymax|  xmin|  ymin|  Col|  Row|    z|  scale|  inclinationAzimut|  inclinationAngle|  stemTwist| Border\_x | Border\_y | Border |
-|-----:|----------:|-----:|---------:|-----:|-----:|----:|----:|----:|------:|------------------:|-----------------:|----------:|:----------|:----------|:-------|
-|   4.6|   3.983717|  36.8|  31.86973|     0|     0|    1|    1|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  13.8|  11.951151|  36.8|  31.86973|     0|     0|    1|    1|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|   4.6|  19.918584|  36.8|  31.86973|     0|     0|    1|    2|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  13.8|  27.886018|  36.8|  31.86973|     0|     0|    1|    2|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  23.0|   3.983717|  36.8|  31.86973|     0|     0|    2|    1|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  32.2|  11.951151|  36.8|  31.86973|     0|     0|    2|    1|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  23.0|  19.918584|  36.8|  31.86973|     0|     0|    2|    2|    0|      1|                  0|                 0|          0| out       | out       | out    |
-|  32.2|  27.886018|  36.8|  31.86973|     0|     0|    2|    2|    0|      1|                  0|                 0|          0| out       | out       | out    |
+``` bash
+ node build.js
+```
 
-If you need a new design, make sure your design table follows this exact format.
+Remember to first build the app (`npm run package-win`) before building the installer.
+
+NB: Several interesting build options are available for the installer, see [the project repository](https://github.com/electron/windows-installer) for more details. These options should be added to the `settings` variable in `build.js`.
 
 References
 ----------
