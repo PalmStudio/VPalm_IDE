@@ -321,6 +321,23 @@ server <- function(input, output, session) {
     }
   )
   
+  output$design_ex=
+    renderTable(
+      Vpalmr::design_plot(rows = 2, cols = 1, x_dist = 9.2)$design%>%
+        dplyr::select(.data$x,.data$y,.data$z,.data$xmin, .data$ymin,
+                      .data$xmax, .data$ymax,.data$scale,
+                      .data$inclinationAzimut,.data$inclinationAngle,
+                      .data$stemTwist)
+    )
+  
+  custom_design= reactive(
+    if(isTruthy(input$planting_design)){
+      data.table::fread(file = input$planting_design$datapath, data.table = FALSE)
+    }else{
+      NULL
+    }
+  )
+
   scenes= 
     eventReactive(
       input$makescene,
@@ -350,6 +367,12 @@ server <- function(input, output, session) {
                                AMAPStudio = getwd(),
                                ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
                                plant_dist = input$plant_dist,
+                               plot_design= 
+                                 if(is.na(input$planting_design)){
+                                   NULL
+                                 }else{
+                                   custom_design()
+                                 },
                                seed= if(is.na(input$nbtrees)){NULL}else{seeds()},
                                progress = function(x){
                                  updateProgress(detail = x, progress_obj = progress_obj,

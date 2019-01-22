@@ -342,19 +342,34 @@ ui <- navbarPage(
                    p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe 
                use randomly generated palm trees for each progeny instead of the average one ?"),
                    fluidRow(
-                     column(6,
-                            fileInput("planting_design", label= "Custom planting design"),
-                            em("Hint: Always check if the design of the plot correspond to the one you inputed")
-                     ),
-                     column(6, numericInput(inputId = "nbtrees", 
-                                            label = "Number of random trees",
-                                            value = 0, min = 1, max = 100, step = 1))
+
+                     numericInput(inputId = "nbtrees", 
+                                  label = "Number of random trees",
+                                  value = 0, min = 1, max = 100, step = 1)
                    ),
                    br(),
                    fluidRow(
                      p("If you need to set a random seed, set a comma separated vector of length equal to the",
                        "number of trees required."),
                      textInput('seed', 'Enter a vector of seeds (comma delimited)')
+                   ),
+                   br(),
+                   fluidRow(
+                     p("To add a custom design into the VPalm app, you should follow the format of `design_plot()`. For example for 2 rows of 2 palm trees in quincunx (*i.e.* 4 palms), we 
+                      call", code("Vpalmr::design_plot()"), "as follows:"),
+                     column(6,
+                            code(
+                                p("library(Vpalmr)"),
+                                p("design_plot(rows = 2, cols = 1, x_dist = 9.2)")
+                              )
+                     )
+                   ),
+                   fluidRow(
+                     p("The mandatory columns needed are as follows:"),
+                     tableOutput("design_ex"),
+                     p("So if you need a new design, make sure your design table follows exactly this format."),
+                     fileInput("planting_design", label= "Custom planting design"),
+                     em("Hint: Always check if the design of the plots below correspond to the one you inputed")
                    )
                  )
                ),
