@@ -27,5 +27,8 @@
   "devDependencies": {
     "electron": "~1.6.2",
     "electron-winstaller": "^2.7.0"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
   }
 }

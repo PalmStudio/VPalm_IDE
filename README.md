@@ -67,6 +67,7 @@ Install the package if not already done:
 
 ``` bash
  npm install --save-dev electron-winstaller
+ npm install --save electron-squirrel-startup
 ```
 
 And build the installer using node:

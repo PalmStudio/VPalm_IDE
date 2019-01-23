@@ -1,7 +1,11 @@
 // Handling Squirrel Events (see https://github.com/electron/windows-installer)
 if (require('electron-squirrel-startup')) return;
 
-const app = require('app');
+// Now this is the code to build the electron app:
+const electron = require('electron');
+// Module to control application life.
+const app = electron.app;
+
 if (handleSquirrelEvent()) {
   // squirrel event handled and app will exit in 1000ms, so don't do anything else
   return;
@@ -69,10 +73,7 @@ function handleSquirrelEvent() {
   }
 };
 
-// Now this is the code to build the electron app:
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
+
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 

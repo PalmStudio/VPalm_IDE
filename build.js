@@ -11,6 +11,8 @@ var settings = {
   authors: "R. Vezy <remi.vezy@cirad.fr> (https://remi-vezy.netlify.com/); R. Perez <raphael.perez@cirad.fr>,  J. Dauzat <jean.dauzat@cirad.fr>"
 };
 
+console.log('Creating package (this may take a while)')
+
 resultPromise = electronInstaller.createWindowsInstaller(settings);
 
 resultPromise.then(() => {
