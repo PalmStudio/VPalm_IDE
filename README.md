@@ -85,15 +85,26 @@ Automatic updates
 
 It is possible to add automatic updates to the app by using a remote repository. To set it up, we can add the option `remoteReleases` (see [here](https://github.com/electron/windows-installer) for more details) and `remoteToken` if necessary. The link should point the releases folders *i.e.* the `installer-x64` folder for our example. Then electron will check for any updates automatically, dowload them and install them if necessary. Further details are available on the [Squirrel.Windows documentation](https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/readme.md). Also see [this](https://stackoverflow.com/questions/42749972/how-to-make-a-simple-updater-for-electron-application) and [this](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05) .
 
+Summary
+-------
+
+To update the application and the installer, simply run these commands:
+
+``` bash
+ npm install
+ npm run package-win
+ node build.js
+```
+
 References
 ----------
 
 Perez, Raphaël. 2017. “Analyzing and Modelling the Genetic Variability of Aerial Architecture and Light Interception of Oil Palm (Elaeis Guineensis Jacq).” Thesis.
 
-Perez, Raphaël, Evelyne Costes, Frédéric Théveny, Sébastien Griffon, Jean-Pierre Caliman, and Jean Dauzat. 2018. “3D Plant Model Assessed by Terrestrial Lidar and Hemispherical Photographs: A Useful Tool for Comparing Light Interception Among Oil Palm Progenies.” *Agricultural and Forest Meteorology* 249: 250–63. <doi:%5Bhttps://doi.org/10.1016/j.agrformet.2017.11.008%5D(https://doi.org/https://doi.org/10.1016/j.agrformet.2017.11.008)>.
+Perez, Raphaël, Evelyne Costes, Frédéric Théveny, Sébastien Griffon, Jean-Pierre Caliman, and Jean Dauzat. 2018. “3D Plant Model Assessed by Terrestrial Lidar and Hemispherical Photographs: A Useful Tool for Comparing Light Interception Among Oil Palm Progenies.” *Agricultural and Forest Meteorology* 249: 250–63. [DOI](https://doi.org/https://doi.org/10.1016/j.agrformet.2017.11.008).
 
-Perez, Raphaël, Jean Dauzat, Benoît Pallas, Julien Lamour, Philippe Verley, Jean-Pierre Caliman, Evelyne Costes, and Robert Faivre. 2018. “Designing Oil Palm Architectural Ideotypes for Optimal Light Interception and Carbon Assimilation Through a Sensitivity Analysis of Leaf Traits.” Journal Article. *Annals of Botany* 121 (5): 909–26. <doi:%5B10.1093/aob/mcx161%5D(https://doi.org/10.1093/aob/mcx161)>.
+Perez, Raphaël, Jean Dauzat, Benoît Pallas, Julien Lamour, Philippe Verley, Jean-Pierre Caliman, Evelyne Costes, and Robert Faivre. 2018. “Designing Oil Palm Architectural Ideotypes for Optimal Light Interception and Carbon Assimilation Through a Sensitivity Analysis of Leaf Traits.” Journal Article. *Annals of Botany* 121 (5): 909–26. DOI: [10.1093/aob/mcx161](https://doi.org/10.1093/aob/mcx161).
 
-Perez, Raphaël, Benoît Pallas, Gilles Le Moguédec, Hervé Rey, Griffon Sébastien, Jean-Pierre Caliman, Evelyne Costes, and Jean Dauzat. 2016. “Integrating Mixed-Effect Models into an Architectural Plant Model to Simulate Inter-and Intra-Progeny Variability: A Case Study on Oil Palm (Elaeis Guineensis Jacq.).” *Journal of Experimental Botany* 67 (June): erw203. <doi:%5B10.1093/jxb/erw203%5D(https://doi.org/10.1093/jxb/erw203)>.
+Perez, Raphaël, Benoît Pallas, Gilles Le Moguédec, Hervé Rey, Griffon Sébastien, Jean-Pierre Caliman, Evelyne Costes, and Jean Dauzat. 2016. “Integrating Mixed-Effect Models into an Architectural Plant Model to Simulate Inter-and Intra-Progeny Variability: A Case Study on Oil Palm (Elaeis Guineensis Jacq.).” *Journal of Experimental Botany* 67 (June): erw203. DOI: [10.1093/jxb/erw203](https://doi.org/10.1093/jxb/erw203).
 
-Perez, Raphaël, Benoît Pallas, Griffon Sébastien, Hervé Rey, J.P. Caliman, G Le Moguédec, Jean Dauzat, and Evelyne Costes. 2017. “Reconstructing Three-Dimensional Oil Palm Architecture from Allometric Relationships.” *Acta Horticulturae* 1160 (May): 11–18. <doi:%5Bhttps://doi.org/10.17660/ActaHortic.2017.1160.3%5D(https://doi.org/https://doi.org/10.17660/ActaHortic.2017.1160.3)>.
+Perez, Raphaël, Benoît Pallas, Griffon Sébastien, Hervé Rey, J.P. Caliman, G Le Moguédec, Jean Dauzat, and Evelyne Costes. 2017. “Reconstructing Three-Dimensional Oil Palm Architecture from Allometric Relationships.” *Acta Horticulturae* 1160 (May): 11–18. [DOI](https://doi.org/https://doi.org/10.17660/ActaHortic.2017.1160.3).

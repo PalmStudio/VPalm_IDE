@@ -1,14 +1,16 @@
-// C:\Users\sdkca\Desktop\electron-workspace\build.js
 var electronInstaller = require('electron-winstaller');
 
 // In this case, we can use relative paths
 var settings = {
-  appDirectory: './VPalm_IDE/VPalm_IDE-win32-x64',
-  outputDirectory: './VPalm_IDE/installer-x64',
+  appDirectory: './builds/portable/VPalm_IDE-win32-x64',
+  outputDirectory: './builds/installers',
+  loadingGif: './www/install.gif',
   iconURL: 'cc.ico',
   setupIcon: 'cc.ico',
   version: '1.0.0',
-  authors: "R. Vezy <remi.vezy@cirad.fr> (https://remi-vezy.netlify.com/); R. Perez <raphael.perez@cirad.fr>,  J. Dauzat <jean.dauzat@cirad.fr>"
+  authors: "R. Vezy - R. Perez - J. Dauzat",
+  owners: "CIRAD - UMR AMAP",
+  title: "VPalm IDE"
 };
 
 console.log('Creating package (this may take a while)')

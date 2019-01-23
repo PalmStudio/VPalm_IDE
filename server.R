@@ -368,7 +368,7 @@ server <- function(input, output, session) {
                                ntrees = ifelse(is.na(input$nbtrees),0,input$nbtrees),
                                plant_dist = input$plant_dist,
                                plot_design= 
-                                 if(is.na(input$planting_design)){
+                                 if(!isTruthy(input$planting_design)){
                                    NULL
                                  }else{
                                    custom_design()

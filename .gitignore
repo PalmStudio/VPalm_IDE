@@ -50,6 +50,6 @@ rsconnect/
 
 # Electron associated folders and files:
 node_modules
-VPalm_IDE
+builds
 package-lock.json
 R-Portable
