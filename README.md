@@ -79,6 +79,11 @@ Remember to first build the app (`npm run package-win`) before building the inst
 
 NB: Several interesting build options are available for the installer, see [the project repository](https://github.com/electron/windows-installer) for more details. These options should be added to the `settings` variable in `build.js`.
 
+Automatic updates
+-----------------
+
+It is possible to add automatic updates to the app by using a remote repository. To set it up, we can add the option `remoteReleases` (see [here](https://github.com/electron/windows-installer) for more details) and `remoteToken` if necessary. The link should point the releases folders *i.e.* the `installer-x64` folder for our example. Then electron will check for any updates automatically, dowload them and install them if necessary. Further details are available on the [Squirrel.Windows documentation](https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/readme.md). Also see [this](https://stackoverflow.com/questions/42749972/how-to-make-a-simple-updater-for-electron-application) and [this](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05) .
+
 References
 ----------
 
