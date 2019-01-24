@@ -45,13 +45,37 @@ The installation adds a new folder called `node_modules` into your project.
 Build
 -----
 
+### Windows
+
 If the app is running with no issue, then you can build the electron application:
 
 ``` bash
 npm run package-win
 ```
 
-if it does not work, it is probably because the packager is not installed. try to run this command, and re-run the previous one:
+### Linux
+
+``` bash
+npm run package-linux
+```
+
+### Mac
+
+``` bash
+npm run package-mac
+```
+
+### All at once
+
+``` bash
+npm run package-all
+```
+
+NB: not tested yet.
+
+### Issues
+
+If it does not work, it is probably because the packager is not installed. try to run this command, and re-run the previous one:
 
 ``` bash
 npm install -g electron-packager
@@ -60,7 +84,7 @@ npm install -g electron-packager
 run
 ---
 
-A new folder called `VPalm_IDE` appeared on the project. The electron application is in there. To start the application, find the `.exe` file and click on it. That's it ! This executable is a standalone Shiny application.
+A new folder called `builds` appeared on the project. The electron application you just built is in there. To start the application, find the corresponding execution file (*e.g.* the windows `.exe` file) and start it. That's it ! The folder were the executable lies is a standalone Shiny application.
 
 Share
 -----
