@@ -13,18 +13,27 @@ The data preparation, the models and all details are described in the [PhD of R.
 Program details
 ---------------
 
-VPalm IDE is a R Shiny application bundled in an [Electron](https://electronjs.org/) application. This method was used following the work of [Katie Sasso](https://github.com/ksasso) on this [repository](https://github.com/ksasso/Electron_ShinyApp_Deployment).
+VPalm IDE is an R Shiny application bundled in an [Electron](https://electronjs.org/) application. This method was used following the work of [Katie Sasso](https://github.com/ksasso) on this [repository](https://github.com/ksasso/Electron_ShinyApp_Deployment), and improved to add an installer for windows users.
 
 Install
 -------
 
-To build the electron app, you need to download and install [noede.js](https://nodejs.org/en/download/), and to restart your computer. Then, clone this repository, install the app and run it for the first time following these steps:
+To build the electron app, you need to download and install [node.js](https://nodejs.org/en/download/), and to restart your computer. Then, you need to download [R-portable]() so your application does not depends on external ressources. You can also follow this [link](https://sourceforge.net/projects/rportable/files/latest/download) that points to the latest release of the project.
+
+Then, clone this repository:
 
 ``` bash
 # Clone this repository
 git clone https://github.com/VEZY/VPalm_app
 # Go into the repository
 cd VPalm_app
+```
+
+Unzip the R-portable archive into the root of the project.
+
+And now you can install the app and run it for the first time following these steps:
+
+``` bash
 # Install dependencies
 npm install
 # Run the app
