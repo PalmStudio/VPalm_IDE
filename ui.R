@@ -1,14 +1,14 @@
 pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){
-    install.packages(x, repos= "https://cloud.r-project.org")  
+    install.packages(x, repos= "https://cloud.r-project.org")
   }
   require(x, character.only = T)
 })
 
 if(!require(Vpalmr)){
   if(!require(remotes)){
-    install.packages("remotes")  
+    install.packages("remotes")
   }
   remotes::install_github("VEZY/Vpalmr")
 }
@@ -17,22 +17,22 @@ source("helpers.R")
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
-  "VPalm-IDE",
-  
+  "VPALM-IDE",
   
   # Page 1: Importing / Computing VPalm parameter files ---------------------
-  
+
   tabPanel("Importing / computing VPalm parameters",
+
            # Application title
            # titlePanel("Virtual Palm plants from field data"),
            # hr(),
-           # Ensuring that the background is always the same: 
+           # Ensuring that the background is always the same:
            tags$head(tags$style(HTML("
                             .shiny-text-output {background-color:#fff;}"))),
-           tags$head(HTML('<link rel="shortcut icon" href="www/favicon.ico">
-                          <link rel="icon" type="image/png" sizes="16x16" href="www/favicon-16x16.png">
-                          <link rel="icon" type="image/png" sizes="32x32" href="www/favicon-32x32.png">')),
-           h1("Import data", span("And Compute Parameters", style = "font-weight: 300"), 
+           tags$head(HTML('<link rel="shortcut icon" href="favicon.png">
+                          <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+                          <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">')),
+           h1("Import data", span("And Compute Parameters", style = "font-weight: 300"),
               style = "color: #fff; text-align: center;
                               background-image: url('texturebg.png');
                               padding: 20px"),
@@ -40,23 +40,23 @@ ui <- navbarPage(
            p("There are two main ways to get parameters for the construction of 3D palms:",
              tags$ul(
                tags$li("By loading a previous computation of the parameters that was made using this
-                                application or the",code("Vpalmr"),"package"), 
+                                application or the",code("Vpalmr"),"package"),
                tags$li("By loading the data files first, and then by computing the parameters in the
                                 app using",code("VPalmr::mod_all()"),
                        ". Loading the data can also be done in two ways:"),
                tags$ul(
-                 tags$li("From the default folder in the Shiny application (in 1-Data/Archi)"), 
+                 tags$li("From the default folder in the Shiny application (in 1-Data/Archi)"),
                  tags$li("Or by loading each file independently")
                )
              )
            ),
-           
+
            br(),
            p("Load previous computation or make a new one ?"),
            selectInput("previous", "Choose here:", c(" ","Load previous computation",
                                                      'Compute new parameters'), selected = " ",
                        multiple = FALSE),
-           
+
            conditionalPanel(
              condition = 'input.previous == "Load previous computation"',
              h2("Import parameters from previous session:"),
@@ -64,7 +64,7 @@ ui <- navbarPage(
                "need on the previous session, you can import the results instead of",
                " re-computing them."),
              em("Hint: they are often written as 'models.Rdata'"),
-             fluidRow(  
+             fluidRow(
                column(6,
                       wellPanel(
                         fileInput("params_previous",
@@ -76,10 +76,10 @@ ui <- navbarPage(
                       )
                )
              )
-           ),  
+           ),
            conditionalPanel(
              condition = 'input.previous == "Compute new parameters"',
-             
+
              h2("Load the data and compute the parameters"),
              p("If you need a new computation for the parameters, choose a palm age, import the data",
                "and compute the new parameter values using",code("VPalmr::mod_all()"),"by following",
@@ -128,13 +128,13 @@ ui <- navbarPage(
                      #   br(),
                      #   p("Importing the files using",code("Vpalmr::import_data"),":")
                      # ),
-                     
+
                      conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
                        h2("Load data from local default file location"),
                        p("The default file location is '1-Data/Archi' in the Shiny application."),
                        p(textOutput("architecture1", container = span))
-                     ), 
+                     ),
                      # Button to trigger data load from folder (default or user-specified):
                      conditionalPanel(
                        condition = 'input.load == "Load data from folder" | input.load == "Load data from default folder"',
@@ -147,9 +147,9 @@ ui <- navbarPage(
                        condition = 'input.load == "Load each file separately"',
                        h2("Load data from files:"),
                        p(textOutput("architecture2", container = span)),
-                       
+
                        h3("Choose each input files:"),
-                       
+
                        fluidRow(
                          column(4,p("Parameter file (e.g. ParameterSimu):"),
                                 fileInput("param_file",NULL)),
@@ -244,14 +244,14 @@ ui <- navbarPage(
              downloadButton("downloadData", "Download")
            )
   ),
-  
-  
+
+
   # Page 2: Calling VPalm, design the plot and export OPS/OPF files ---------
-  
+
   tabPanel("OPS/OPF files making",
            tags$head(tags$style(HTML("
                             .shiny-text-output {background-color:#fff;}"))),
-           h1("Call VPalm to ", span("compute OPF and OPS files", style = "font-weight: 300"), 
+           h1("Call VPalm to ", span("compute OPF and OPS files", style = "font-weight: 300"),
               style = "color: #fff; text-align: center;
                              background-image: url('texturebg.png');
                              padding: 20px"),
@@ -260,15 +260,15 @@ ui <- navbarPage(
              tags$ul(
                tags$li("VPalm parameter files are written on disk for each progeny and each tree required in the scene",
                        "from the parameters that were computed or imported beforehand in the first page of this application.",
-                       "See",code("Vpalmr::extract_progeny()"),",",code("Vpalmr::format_progeny()"), "and", 
+                       "See",code("Vpalmr::extract_progeny()"),",",code("Vpalmr::format_progeny()"), "and",
                        code("Vpalmr::write_progeny()"),"for further information."),
                tags$li("The VPalm automaton is called to construct 3D palm mock-ups in OPFs format using the parameter files, see",
-                       code("Vpalmr::make_opf_all()"),"for further information."), 
+                       code("Vpalmr::make_opf_all()"),"for further information."),
                tags$li("The plot design is constructed according to the number of trees desired, see",code("Vpalmr::design_plot()"),
                        "for more details."),
                tags$li("And finally make the OPS (Open Plant Scene) file to link all elements of the scene using",
                        code("Vpalmr::make_ops_all()"),".")
-               
+
              )
            ),
            p("Some parameters are needed to compute the 3D palm scenes:",
@@ -277,12 +277,12 @@ ui <- navbarPage(
                        "The Vpalm inputs folder, which contains the parameters values for each palm tree input",
                        "of VPalm ; and the scene folder, where the OPS and OPF files are written."),
                tags$li("The number of leaves of the 3D mock-up. Palms in the field have generally
-                       45 leaves because leaves with rank greater than 45 are selectively pruned 
+                       45 leaves because leaves with rank greater than 45 are selectively pruned
                        as a consequence of the harvest."),
                tags$li("The progeny to use. A scene is made of palms from one progeny only for simplicity,
                        so the user can choose the progeny to use. An option is available to use the average
                        traits of all progenies for users that don't mind using a specific progeny. Choose
-                        'All' if you want to use this option."), 
+                        'All' if you want to use this option."),
                tags$li("The distance between palm trees in the scene design.")
              )
            ),
@@ -318,7 +318,7 @@ ui <- navbarPage(
              textOutput("dirtrigger2"),
              conditionalPanel(
                condition = 'output.dirtrigger2 == "Now you can set the parameters:"',
-               
+
                # Number of leaves for the mock-up:
                numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
                             value = 45, min = 3, max = 100, step = 1),
@@ -327,23 +327,23 @@ ui <- navbarPage(
                # Plant distance:
                numericInput(inputId = "plant_dist", label = "Distance between palm trees in the scene",
                             value = 9.2, min = 1, max = 100, step = 0.01),
-               
+
                # Advanced parameters:
                p("You can trigger advanced parameters if you need them, but please remember they should be
              used by advanced users only."),
                # actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
                p(strong("Trigger advanced parameters")),
                actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle "),
-                            style= "color:white; 
+                            style= "color:white;
                        background-color: #E31F1F"),
                conditionalPanel(
                  condition = 'input.advanced_param_button%2==1',
                  wellPanel(
-                   p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe 
+                   p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe
                use randomly generated palm trees for each progeny instead of the average one ?"),
                    fluidRow(
 
-                     numericInput(inputId = "nbtrees", 
+                     numericInput(inputId = "nbtrees",
                                   label = "Number of random trees",
                                   value = 0, min = 1, max = 100, step = 1)
                    ),
@@ -355,7 +355,7 @@ ui <- navbarPage(
                    ),
                    br(),
                    fluidRow(
-                     p("To add a custom design into the VPalm app, you should follow the format of `design_plot()`. For example for 2 rows of 2 palm trees in quincunx (*i.e.* 4 palms), we 
+                     p("To add a custom design into the VPalm app, you should follow the format of `design_plot()`. For example for 2 rows of 2 palm trees in quincunx (*i.e.* 4 palms), we
                       call", code("Vpalmr::design_plot()"), "as follows:"),
                      column(6,
                             code(
@@ -374,7 +374,7 @@ ui <- navbarPage(
                  )
                ),
                h3("Compute the scene"),
-               actionButton("makescene", "Make the scene",style = "color: white; 
+               actionButton("makescene", "Make the scene",style = "color: white;
                        background-color: #088A08"),
                # Output the folders paths where the scene and Vpal inputs were written:
                conditionalPanel(
@@ -394,7 +394,7 @@ ui <- navbarPage(
               the scene precisely because the size of the palms is arbitrary. Please open the scene in Xplot to get
               the true dimensions."),
                  p(strong("Choose the size of the palm trees in the scene (rendering purpose only):")),
-                 numericInput(inputId = "palm_size", 
+                 numericInput(inputId = "palm_size",
                               label = "",
                               value = 0.4, min = 0.01, max = 10, step = 0.01),
                  plotOutput("plot_design", width= 600, height = 600,
@@ -404,7 +404,7 @@ ui <- navbarPage(
                  ),
                  verbatimTextOutput("plot_info"),
                  p("Here is a depiction of the plot that would be constructed using the previous voronoï:"),
-                 numericInput(inputId = "voronois", 
+                 numericInput(inputId = "voronois",
                               label = "How many voronoïs in col and rows ?",
                               value = 3, min = 1, max = 20, step = 1),
                  plotOutput("plot_design_rep", width= 1200, height = 1200,
@@ -418,4 +418,3 @@ ui <- navbarPage(
            )
   )
 )
-
