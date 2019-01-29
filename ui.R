@@ -17,7 +17,7 @@ source("helpers.R")
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
-  "VPalm app",
+  "VPalm-IDE",
   
   
   # Page 1: Importing / Computing VPalm parameter files ---------------------

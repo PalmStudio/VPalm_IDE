@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-VPalm IDE
-=========
+VPalm IDE<img src="www/logo.png" alt="logo" width="150" align="right" />
+========================================================================
 
 Introduction
 ------------
@@ -24,9 +24,9 @@ Then, clone this repository:
 
 ``` bash
 # Clone this repository
-git clone https://github.com/VEZY/VPalm_app
+git clone https://github.com/VEZY/VPALM_IDE
 # Go into the repository
-cd VPalm_app
+cd VPALM_IDE
 ```
 
 Unzip the R-portable archive into the root of the project.

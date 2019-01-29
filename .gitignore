@@ -48,6 +48,9 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 
+# Logo
+*.pptx
+
 # Electron associated folders and files:
 node_modules
 builds
