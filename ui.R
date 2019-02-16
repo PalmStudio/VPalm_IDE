@@ -88,11 +88,12 @@ ui <- navbarPage(
              tags$ul(
                tags$li(
                  h3("Please choose the desired palm age for the data import:"),
-                 sliderInput("map",
-                             "Desired palm age in months after planting:",
-                             min = 1,
-                             max = 47,
-                             value = 47),
+                 textInput('map', 'Desired palm age in months after planting:'),
+                 # sliderInput("map",
+                 #             "Desired palm age in months after planting:",
+                 #             min = 1,
+                 #             max = 47,
+                 #             value = 47),
                  p("Data will be prepared with the desired palm age +/- 20 months")
                ),
                tags$li(
@@ -140,7 +141,8 @@ ui <- navbarPage(
                        condition = 'input.load == "Load data from folder" | input.load == "Load data from default folder"',
                        br(),
                        p("Import the files using",code("Vpalmr::import_data"),":"),
-                       actionButton("load_data_folder", label = "Load data")
+                       actionButton("load_data_folder", label = "Load data"),
+                       textOutput("test")
                      ),
                      # Load each file separately:
                      conditionalPanel(
