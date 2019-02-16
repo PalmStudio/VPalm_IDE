@@ -87,10 +87,7 @@ server <- function(input, output, session) {
           error = function(out){
             return('Error')
           })
-      if(Inputs=="Error"){
-        showNotification("Given MAP does not exist in the data")
-        # output$test= renderText(Palm_data_folder())
-      }else{
+      if(Inputs!="Error"){
         message("Data successfully imported")
       }
       Inputs
@@ -122,41 +119,43 @@ server <- function(input, output, session) {
   # trigger the display of the Parameter data.frame from the data just read (for control):
   # output$data_trigger= 
   #   renderText({
-  #     if(!is.null(Palm_data()$Parameter)){
+  #     if(isTruthy(Palm_data())){
   #       if(is.data.frame(Palm_data()$Parameter)&&
   #          nrow(Palm_data()$Area)>0){
   #         showNotification("Data successfully imported")
   #         'ok'
   #       }else{
-  #         showNotification("Given MAP does not yield enough data")
+  #         if(Palm_data()=="Error"){
+  #           showNotification("Given MAP does not exist in the data")  
+  #         }else{
+  #           showNotification("Given MAP does not yield enough data")
+  #         }
   #         'notok'
   #       }
   #     }else{
-  #       if(Palm_data()=="Error"){'notok'}else{
-  #         'notyet'
-  #       }
+  #       'notyet'
   #     }
   #   })
-  
   output$data_trigger= 
     renderText({
       if(isTruthy(Palm_data())){
-        if(is.data.frame(Palm_data()$Parameter)&&
-           nrow(Palm_data()$Area)>0){
+        if(Palm_data()=="Error"){
+          showNotification("Given MAP does not exist in the data")
+          'notok'
+        }else if(is.data.frame(Palm_data()$Parameter)&&
+                 nrow(Palm_data()$Area)>0){
           showNotification("Data successfully imported")
           'ok'
         }else{
-          if(Palm_data()=="Error"){
-            showNotification("Given MAP does not exist in the data")  
-          }else{
-            showNotification("Given MAP does not yield enough data")
-          }
-          'notok'
+          showNotification("Given MAP does not yield enough data")
+          'notok'  
         }
       }else{
         'notyet'
       }
     })
+  
+  
   outputOptions(output, "data_trigger", suspendWhenHidden = FALSE)  
   
   output$progeny_filt = renderUI({
