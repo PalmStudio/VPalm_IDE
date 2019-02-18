@@ -80,7 +80,12 @@ server <- function(input, output, session) {
           petiole_width= file.path(dir_path,'Petiole_SMSE14.csv'),
           twist= file.path(dir_path,'Torsion_SMSE14.csv')
         )
-      data_path$map= input$map
+      map_num= as.numeric(input$map)
+      if(!is.na(map_num)){
+        data_path$map= map_num
+      }else{
+        return('Error')
+      }
       Inputs=
         tryCatch(
           do.call(Vpalmr::import_data, data_path),
@@ -117,25 +122,6 @@ server <- function(input, output, session) {
       })
   
   # trigger the display of the Parameter data.frame from the data just read (for control):
-  # output$data_trigger= 
-  #   renderText({
-  #     if(isTruthy(Palm_data())){
-  #       if(is.data.frame(Palm_data()$Parameter)&&
-  #          nrow(Palm_data()$Area)>0){
-  #         showNotification("Data successfully imported")
-  #         'ok'
-  #       }else{
-  #         if(Palm_data()=="Error"){
-  #           showNotification("Given MAP does not exist in the data")  
-  #         }else{
-  #           showNotification("Given MAP does not yield enough data")
-  #         }
-  #         'notok'
-  #       }
-  #     }else{
-  #       'notyet'
-  #     }
-  #   })
   output$data_trigger= 
     renderText({
       if(isTruthy(Palm_data())){
