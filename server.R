@@ -261,7 +261,9 @@ server <- function(input, output, session) {
   # Make the data downloadable:
   output$downloadData= downloadHandler(
     filename = function() {
-      paste0("models_MAP_",input$map,".RData")
+      paste0("models_MAP_",input$map,"_Prog_",
+             paste(unique(Palm_Param()$input$Parameter$Progeny), collapse = "_"),
+             ".RData")
     },
     content = function(file) {
       saveRDS(Palm_Param(), file)
