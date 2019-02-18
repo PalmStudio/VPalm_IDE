@@ -1,3 +1,5 @@
+
+.libPaths("R-Portable/library")
 pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles')
 lapply(pack, function(x){
   if(!require(x, character.only = T)){

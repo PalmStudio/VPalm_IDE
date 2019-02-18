@@ -92,7 +92,7 @@ server <- function(input, output, session) {
           error = function(out){
             return('Error')
           })
-      if(Inputs!="Error"){
+      if(all(Inputs!="Error")){
         message("Data successfully imported")
       }
       Inputs
@@ -125,7 +125,7 @@ server <- function(input, output, session) {
   output$data_trigger= 
     renderText({
       if(isTruthy(Palm_data())){
-        if(Palm_data()=="Error"){
+        if(all(Palm_data()=="Error")){
           showNotification("Given MAP does not exist in the data")
           'notok'
         }else if(is.data.frame(Palm_data()$Parameter)&&
