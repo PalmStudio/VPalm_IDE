@@ -12,7 +12,7 @@ if(!require(Vpalmr)){
   if(!require(remotes)){
     install.packages("remotes")
   }
-  remotes::install_github("VEZY/Vpalmr")
+  remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
 }
 library(Vpalmr)
 source("helpers.R")
