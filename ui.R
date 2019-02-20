@@ -65,7 +65,7 @@ ui <- navbarPage(
              p("If you already did the computation of the parameters for the map you",
                "need on the previous session, you can import the results instead of",
                " re-computing them."),
-             em("Hint: they are often written as 'models.Rdata'"),
+             em("Hint: they are written as 'models_MAP_{}_Prog_{}.Rdata'"),
              fluidRow(
                column(6,
                       wellPanel(
@@ -101,9 +101,10 @@ ui <- navbarPage(
                tags$li(
                  hr(),
                  h3("Load the data:"),
-                 p("Two ways are provided to import the",
-                   "data: import them from the default location in the Shiny app (left)",
-                   strong("or"),"load each file separately (right)."),
+                 p("Three ways are provided to import the",
+                   "data: import them from the default data in VPALM-IDE,",
+                   "importh them from a custom folder,",
+                   strong("or"),"load each file separately."),
                  selectInput("load", "Choose here:", c(" ",
                                                        "Load data from folder",
                                                        "Load data from default folder",
@@ -135,7 +136,7 @@ ui <- navbarPage(
                      conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
                        h2("Load data from local default file location"),
-                       p("The default file location is '1-Data/Archi' in the Shiny application."),
+                       p("The default file location is located into the VPALM-IDE application."),
                        p(textOutput("architecture1", container = span))
                      ),
                      # Button to trigger data load from folder (default or user-specified):

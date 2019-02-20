@@ -16,8 +16,8 @@ map= 47
 plant_dist= 9.2
 
 # Import all data and fit the models:
-Palm_Param= compute_archi(map = map, data_path = "1-Data/Archi", 
-                          write_path = "../VPalm_Architecture/models_MAP_59.RData")
+# Palm_Param= compute_archi(map = map, data_path = "1-Data/Archi", 
+#                           write_path = "../VPalm_Architecture/models_MAP_59.RData")
 Palm_Param= readRDS(file = "../VPalm_Architecture/models_MAP_47.RData")
 # scene= make_scene(data = Palm_Param, ntrees = ntrees, nleaves = nleaves, 
 #                   path = "3-Outputs", 

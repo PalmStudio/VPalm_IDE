@@ -411,16 +411,21 @@ server <- function(input, output, session) {
   
   output$plot_design <- renderPlot({
     plot_design= scenes()$plot_design
+    ranges= range(plot_design$xmax,plot_design$ymax,plot_design$xmin,plot_design$ymin)
+    
     plot_design%>%
       mutate(image= 'www/palm_tiny.png')%>%
       ggplot(aes(x= x, y= y))+
+      coord_fixed()+
+      geom_point()+
       geom_image(aes(image= image), size= input$palm_size)+
       geom_point(aes(color= "Palm tree center"))+
-      ylim(low= min(unique(plot_design$ymin)),
-           high= max(unique(plot_design$ymax)))+
-      xlim(low= min(unique(plot_design$xmin)),
-           high= max(unique(plot_design$xmax)))+
-      labs(colour = "")+
+      geom_polygon(data= polygon_coord(plot_design), 
+                   aes(x= x, y= y, fill= "Plot limits", 
+                       color= "Plot limits"), alpha= 0.2)+
+      ylim(low= ranges[1], high= ranges[2])+
+      xlim(low= ranges[1], high= ranges[2])+
+      labs(colour = "", fill= "")+
       theme(legend.position="bottom")
   })
   
@@ -428,6 +433,7 @@ server <- function(input, output, session) {
     paste0(
       "Value on click: ", xy_str(input$plot_click),
       "Value on hover: ", xy_str(input$plot_hover),
+      "Diagonal length: ", xy_length(input$plot_brush),
       "Selection: ", xy_range_str(input$plot_brush)
     )
   })
@@ -452,6 +458,8 @@ server <- function(input, output, session) {
       }, Row= mat_plot$Row, Col= mat_plot$Col)%>%t()%>%as_tibble()%>%
       tidyr::unnest()
     
+    ranges_full= range(design$xmax,design$ymax,design$xmin,design$ymin)
+    
     voronoi_stands=
       design%>%
       mutate(group= paste0('x:',Col,", y:",Row))%>%
@@ -473,14 +481,13 @@ server <- function(input, output, session) {
       ggplot(aes(x= .data$x, y= .data$y))+
       geom_image(aes(image= image), size= input$palm_size/3)+
       geom_point(aes(color= "Palm tree center"))+
-      ylim(low= min(unique(design$ymin)),
-           high= max(unique(design$ymax)))+
-      xlim(low= min(unique(design$xmin)),
-           high= max(unique(design$xmax)))+
+      ylim(low= ranges_full[1], high= ranges_full[2])+
+      xlim(low= ranges_full[1], high= ranges_full[2])+
       theme(legend.position="bottom")+
       labs(fill= "Voronoï index", x= "x coordinate (m)", y= "y coordinate (m)")+
       geom_polygon(data= voronoi_stands, aes(x= x, y= y, fill= v_id, color= v_id), alpha= 0.2)+
-      guides(color= FALSE)
+      guides(color= FALSE)+
+      coord_fixed()
   })
   
   
@@ -488,6 +495,7 @@ server <- function(input, output, session) {
     paste0(
       "Value on click: ", xy_str(input$plot_click_rep),
       "Value on hover: ", xy_str(input$plot_hover_rep),
+      "Diagonal length: ", xy_length(input$plot_brush),
       "Selection: ", xy_range_str(input$plot_brush_rep)
     )
   })

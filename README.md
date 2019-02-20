@@ -129,6 +129,27 @@ To update the application and the installer, simply run these commands:
  node build.js
 ```
 
+
+R Packages update
+-------
+
+To update the R packages of R-portable, follow these steps:
+* Execute R. It is located here "R-Portable/bin/R.exe".  
+* Set the library location from R:
+``` r
+.libPaths("../library")
+```
+* And update the package:
+``` r
+install.packages("dplyr")
+```
+
+N.B.: to update the Vpalmr package, execute this command:
+``` r
+remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
+```
+
+
 References
 ----------
 
