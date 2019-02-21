@@ -14,7 +14,9 @@ library(lubridate)
 library(ggplot2)
 library(plotly)
 
-# Updating parameter file -------------------------------------------------
+
+# Importing the files -----------------------------------------------------
+
 parameters= fread("1-Data/Archi/ParameterSimu.csv", data.table = F)
 
 development= 
@@ -23,8 +25,11 @@ development=
          Observation_Date= lubridate::dmy(.data$Observation_Date))
 
 
+# Updating development file -----------------------------------------------
+
 # Computing the MAP -------------------------------------------------------
 
+# Lookup table for transplanting date for each progeny:
 Planting_date_df= 
   development%>%
   select(.data$TreeNumber,.data$Transplanting_Date)%>%
@@ -34,54 +39,34 @@ Planting_date_df=
 
 # Re-computing the MAP:
 development=
-  dplyr::left_join(development%>%select(-Transplanting_Date),Planting_date_df)%>%
-  dplyr::mutate(MAP_comp= lubridate::interval(Transplanting_Date,Observation_Date) %/% months(1))%>%
-  group_by(TreeNumber)%>%
-  arrange(Observation_Date)%>%
-  dplyr::mutate(MAP_comp= ifelse(!is.na(Nb_frond)&!is.na(lag(Nb_frond))&Nb_frond==lag(Nb_frond)&
-                                   !is.na(LeafIndexRank1)&!is.na(lag(LeafIndexRank1))&
-                                   LeafIndexRank1==lag(LeafIndexRank1),
-                                 lag(MAP_comp),MAP_comp))%>%
-  dplyr::mutate(MAP_comp= ifelse(!is.na(Nb_frond)&!is.na(lead(Nb_frond))&Nb_frond==lead(Nb_frond)&
-                                   !is.na(LeafIndexRank1)&!is.na(lead(LeafIndexRank1))&
-                                   LeafIndexRank1==lead(LeafIndexRank1),
-                                 lead(MAP_comp),MAP_comp))%>%ungroup()
+  dplyr::left_join(development%>%select(-.data$Transplanting_Date),Planting_date_df)%>%
+  dplyr::mutate(MAP_comp= lubridate::interval(.data$Transplanting_Date,.data$Observation_Date)%/%
+                  months(1))%>%
+  group_by(.data$TreeNumber)%>%
+  arrange(.data$Observation_Date)%>%
+  dplyr::mutate(MAP_comp= ifelse(!is.na(.data$Nb_frond)&!is.na(lag(.data$Nb_frond))&
+                                   .data$Nb_frond==lag(.data$Nb_frond)&
+                                   !is.na(.data$LeafIndexRank1)&!is.na(lag(.data$LeafIndexRank1))&
+                                   .data$LeafIndexRank1==lag(.data$LeafIndexRank1),
+                                 lag(.data$MAP_comp),.data$MAP_comp))%>%
+  dplyr::mutate(MAP_comp= ifelse(!is.na(.data$Nb_frond)&!is.na(lead(.data$Nb_frond))&
+                                   .data$Nb_frond==lead(.data$Nb_frond)&
+                                   !is.na(.data$LeafIndexRank1)&!is.na(lead(.data$LeafIndexRank1))&
+                                   LeafIndexRank1==lead(.data$LeafIndexRank1),
+                                 lead(.data$MAP_comp),.data$MAP_comp))%>%ungroup()%>%
+  dplyr::mutate(MonthAfterPlanting= .data$MAP_comp)%>%
+  select(-.data$MAP_comp)
 # NB: The last two mutates are used for the case when one session is made on several different days
 
+# Writing the new development file with updated MAP and Transplanting_Date.
+# development%>%
+#   arrange(Trial, Progeny, Observation_Date, TreeNumber)%>%
+#   mutate(Observation_Date= format(Observation_Date, "%d/%m/%Y"))%>%
+#   data.table::fwrite("1-Data/Archi/Development_Rep4_SMSE.csv", sep=";")
 
-# Ask Doni about this particular entry:
-# SMSE	1	B66	4	DY4	105_28	BN13	DY	07/12/2009	22/12/2010	47	08/12/2014	23				1																			
-# It is very weird, and if we remove it we feel that there is a missing campaign
-# I think it is maybe a problem of date: MAP 30	and obs_date 27/06/2013 should be better
-# development$MAP_comp[development$MAP_comp_test]= 
-#   development$MAP_comp[which(development$MAP_comp_test)-1]
 
-# Also, ask Doni about these two lines:
-# SMSE	1	B66	4	DY4	104_31						24/07/2018			96
-# SMSE	1	B66	4	DY4 	104_31						13/11/2018			74
-# The last one should have a higher LeafIndexRank1 but has a lower one. It makes the TotalEmitted go lower.
 
-# Data.frame with error between "measured" and re-computed MAP: 
-MAP_error_df= 
-  development%>%
-  select(TreeNumber, Observation_Date,Transplanting_Date,
-         MonthAfterPlanting,MAP_comp)%>%
-  mutate(MAP_error= MonthAfterPlanting-MAP_comp)%>%
-  na.omit()%>%
-  filter(MAP_error!=0)
-# If any error is found, please check the values and replace them if necessary 
-
-MAP_err_plot= 
-  development%>%
-  ggplot(aes(x= MonthAfterPlanting, y= MAP_comp, color= TreeNumber))+
-  geom_point()+
-  geom_abline(intercept= 0, slope= 1)
-# ggplotly(MAP_err_plot)
-
-# Carefull ! Execute the following line of code only if the MAP is not correct: 
-development$MonthAfterPlanting= development$MAP_comp
-# development= development%>%select(-.data$MAP_comp)
-
+# Updating the parameter file for MAP: ------------------------------------
 
 # Computing the total number of leaves emitted from planting: -------------
 
@@ -104,36 +89,86 @@ development2=
 # Using a moving average to obtain an average total number of emitted leaves per MAP:
 MAP_average=
   development2%>%
-  group_by(MonthAfterPlanting,Progeny)%>%
-  summarise(TotalEmitted= mean(TotalEmitted, na.rm= T))%>%
+  group_by(.data$MonthAfterPlanting,.data$Progeny)%>%
+  summarise(TotalEmitted= mean(.data$TotalEmitted, na.rm= T))%>%
   bind_rows(tibble::tibble(MonthAfterPlanting= 1, 
                            Progeny= unique(development2$Progeny), TotalEmitted= 1),.)
 
+# Using a table with all possible MAPS in the date sequence, and filling it when there is data:
 df_MAP=
   expand.grid(Progeny= unique(MAP_average$Progeny),
               MonthAfterPlanting= 1:max(MAP_average$MonthAfterPlanting))%>%
   left_join(MAP_average,c("MonthAfterPlanting","Progeny"))%>%
-  group_by(Progeny)%>%
-  mutate(TotalEmitted= zoo::na.approx(TotalEmitted,MonthAfterPlanting))%>%
-  mutate(TotalEmitted= round(TotalEmitted))
+  group_by(.data$Progeny)%>%
+  mutate(nbLeaves= zoo::na.approx(.data$TotalEmitted,.data$MonthAfterPlanting))%>%
+  mutate(nbLeaves= round(.data$nbLeaves))%>%
+  select(-.data$TotalEmitted)%>%
+  rename(MAP= .data$MonthAfterPlanting)
 
 ggplot(data = development2, aes(x = MonthAfterPlanting, y= TotalEmitted))+
   facet_wrap(.~Progeny)+
   geom_line(aes(group= TreeNumber))+
-  geom_point(data= df_MAP, aes(color= "Fit"))
-
-test= 
-  ggplot(data = development2%>%filter(Progeny=="DY4"),
-         aes(x = MonthAfterPlanting, y= TotalEmitted))+
-  geom_line(aes(group= TreeNumber))
-ggplotly(test)
-
+  geom_point(data= df_MAP, aes(x = MAP, y= nbLeaves, color= "Fit"))
 
 # Recompute the total number of leaves emmitted from planting -------------
 
 parameters2=
-  left_join(parameters,models)%>%
-  mutate(nbLeaves_2= round(slope*MAP))
+  right_join(parameters%>%select(-.data$nbLeaves),df_MAP, by= c("MAP","Progeny"))%>%
+  mutate(Date= min(lubridate::dmy(.data$Date), na.rm = T) + months(.data$MAP))%>%
+  mutate(Year= lubridate::year(.data$Date), Month= lubridate::month(.data$Date))%>%
+  mutate(Date= format(.data$Date, '%d/%m/%Y'))
 
-View(parameters2)
-plot(parameters2$nbLeaves,parameters2$nbLeaves_2)
+data.table::fwrite(parameters2, "1-Data/Archi/ParameterSimu.csv", sep= ";")
+
+
+
+# Updating the Area file --------------------------------------------------
+area_df= data.table::fread("1-Data/Archi/LeafArea_monitoring_SMSE.csv", data.table = F, sep=';',
+                           fill= T, dec=".")
+is(area_df$Width)
+area_df[is.na(as.numeric(area_df$Width)),]
+
+
+Planting_date_area=
+  area_df%>%
+  select(.data$TreeNumber,.data$FieldPlantingDate)%>%
+  na.omit()%>%
+  group_by(.data$TreeNumber)%>%
+  summarise(Transplanting_Date= unique(.data$FieldPlantingDate))
+
+area_df= 
+  area_df%>%
+  dplyr::left_join(Planting_date_area, by= "TreeNumber")%>%
+  dplyr::mutate(Obs_Date= lubridate::dmy(.data$Obs_Date),
+                FieldPlantingDate= lubridate::dmy(.data$FieldPlantingDate))%>%
+  dplyr::mutate(FieldPlantingDate= lubridate::dmy(.data$Transplanting_Date))%>%
+  dplyr::mutate(MAP= lubridate::interval(.data$FieldPlantingDate,.data$Obs_Date)%/%
+                  months(1))%>%
+  dplyr::mutate(Obs_Date= format(.data$Obs_Date, "%d/%m/%Y"),
+                FieldPlantingDate= format(.data$FieldPlantingDate, "%d/%m/%Y"))%>%
+  select(-.data$Transplanting_Date)
+
+data.table::fwrite(area_df, "1-Data/Archi/LeafArea_monitoring_SMSE.csv", sep=";")
+
+
+# Checking if the data could be imported ----------------------------------
+
+path_data= '1-Data/Archi'
+test= 
+  Vpalmr::import_data(parameter= file.path(path_data,'ParameterSimu.csv'),
+                      development= file.path(path_data,'Development_Rep4_SMSE.csv'),
+                      phylotaxy= file.path(path_data,'Stem_SMSE14.csv'),
+                      declination= file.path(path_data,'AnglesC&A_SMSE_Nov14.csv'),
+                      curvature= file.path(path_data,'LeafCurvature_SMSE14.csv'),
+                      leaf_area= file.path(path_data,'LeafArea_monitoring_SMSE.csv'),
+                      axial_angle= file.path(path_data,'LeafDispositionComp_SMSE14.csv'),
+                      petiole_width= file.path(path_data,'Petiole_SMSE14.csv'),
+                      twist= file.path(path_data,'Torsion_SMSE14.csv'), map = 60)
+
+
+Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
+                          write_path = "../VPalm_Architecture/models_MAP_59.RData")
+
+
+# There are too much missing FrondRank values (no values on new data). How can we compute it ? We 
+# need it for the estimation of the rachis length.
