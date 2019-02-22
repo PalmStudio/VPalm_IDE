@@ -61,9 +61,9 @@ development=
 # Writing the new development file with updated MAP and Transplanting_Date.
 # development%>%
 #   arrange(Trial, Progeny, Observation_Date, TreeNumber)%>%
-#   mutate(Observation_Date= format(Observation_Date, "%d/%m/%Y"))%>%
+#   mutate(Observation_Date= format(Observation_Date, "%d/%m/%Y"),
+#          Transplanting_Date= format(Transplanting_Date, "%d/%m/%Y"))%>%
 #   data.table::fwrite("1-Data/Archi/Development_Rep4_SMSE.csv", sep=";")
-
 
 
 # Updating the parameter file for MAP: ------------------------------------
@@ -82,9 +82,6 @@ development2=
   select(-.data$LeafIndexRank1)%>%
   merge(development,., by= c("TreeNumber","MonthAfterPlanting"),sort = F)%>%
   mutate(Nb_frond= .data$Nb_frond_new)%>%select(-.data$Nb_frond_new)
-
-# development2%>%filter(TreeNumber=="107_29")%>%
-#   select(Observation_Date,TotalEmitted,MonthAfterPlanting,MAP_comp,Nb_frond,LeafIndexRank1)
 
 # Using a moving average to obtain an average total number of emitted leaves per MAP:
 MAP_average=
@@ -110,6 +107,12 @@ ggplot(data = development2, aes(x = MonthAfterPlanting, y= TotalEmitted))+
   geom_line(aes(group= TreeNumber))+
   geom_point(data= df_MAP, aes(x = MAP, y= nbLeaves, color= "Fit"))
 
+# plot_test= 
+#   ggplot(data = development2%>%filter(Progeny=="DY4"),
+#          aes(x = MonthAfterPlanting, y= TotalEmitted))+
+#   geom_line(aes(group= TreeNumber))
+# ggplotly(plot_test)
+
 # Recompute the total number of leaves emmitted from planting -------------
 
 parameters2=
@@ -118,7 +121,7 @@ parameters2=
   mutate(Year= lubridate::year(.data$Date), Month= lubridate::month(.data$Date))%>%
   mutate(Date= format(.data$Date, '%d/%m/%Y'))
 
-data.table::fwrite(parameters2, "1-Data/Archi/ParameterSimu.csv", sep= ";")
+# data.table::fwrite(parameters2, "1-Data/Archi/ParameterSimu.csv", sep= ";")
 
 
 
@@ -148,8 +151,7 @@ area_df=
                 FieldPlantingDate= format(.data$FieldPlantingDate, "%d/%m/%Y"))%>%
   select(-.data$Transplanting_Date)
 
-data.table::fwrite(area_df, "1-Data/Archi/LeafArea_monitoring_SMSE.csv", sep=";")
-
+# data.table::fwrite(area_df, "1-Data/Archi/LeafArea_monitoring_SMSE.csv", sep=";")
 
 # Checking if the data could be imported ----------------------------------
 
