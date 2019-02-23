@@ -2,8 +2,9 @@
 .libPaths("R-Portable/library")
 pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles')
 lapply(pack, function(x){
-  if(!require(x, character.only = T)){
-    install.packages(x, repos= "https://cloud.r-project.org")
+  if(!require(x, character.only = T, lib.loc = "R-Portable/library")){
+    install.packages(x, repos= "https://cloud.r-project.org",
+                     lib = "R-Portable/library")
   }
   require(x, character.only = T)
 })
