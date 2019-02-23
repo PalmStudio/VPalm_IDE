@@ -168,6 +168,8 @@ test=
                       twist= file.path(path_data,'Torsion_SMSE14.csv'), map = 60)
 
 
+Vpalmr::test_Area(x = test$Area, path = "C:/Users/vezy/Desktop")
+
 Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
                           write_path = "../VPalm_Architecture/models_MAP_59.RData")
 
