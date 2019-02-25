@@ -9,40 +9,26 @@ lapply(pack, function(x){
   require(x, character.only = T)
 })
 
-# Test if Vpalmr is up-to-date compared to the Github version, and install it if not:
-remote= remotes:::github_remote(repo = "VEZY/Vpalmr", ref = "master", 
-                                auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
-
-package_name <- remotes:::remote_package_name(remote)
-local_sha <- remotes:::local_sha(package_name)
-tryCatch(expr = {
-  remote_sha <- remotes:::remote_sha(remote, local_sha)
-  if (!isTRUE(force) && !remotes:::different_sha(remote_sha = remote_sha, 
-                                                 local_sha = local_sha)) {
-    message("Vpalmr is already up-to-date compared to the Github version,", 
-            "the SHA1 (", substr(remote_sha, 1L, 8L), ") has not changed since last install.\n")
-  }else{
-    remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
-  }
-}, error= function(cond){
-  message("Could not fetch Vpalmr from Github.com at VEZY/Vpalmr. ",
-          "Check your internet connection. ",
-          "VPALM-IDE will use the current local version of Vpalmr. \n",
-          "The original error is as follows:")
-  message(cond)
-})
-
-library(Vpalmr)
+# require(Vpalmr)
 source("helpers.R")
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
   "VPALM-IDE",
-  
   # Page 1: Importing / Computing VPalm parameter files ---------------------
-
+  tabPanel("Initialize",
+           shinyjs::useShinyjs(),
+           div(
+             id = "loading_page",
+             h1("Downloading Vpalmr package (this can take a while)")
+           ),
+           div(
+             id = "loaded",
+             h2("All packages were imported, please proceed to next page.")
+           )
+  ),
   tabPanel("Importing / computing VPalm parameters",
-
+           
            # Application title
            # titlePanel("Virtual Palm plants from field data"),
            # hr(),
@@ -70,13 +56,13 @@ ui <- navbarPage(
                )
              )
            ),
-
+           
            br(),
            p("Load previous computation or make a new one ?"),
            selectInput("previous", "Choose here:", c(" ","Load previous computation",
                                                      'Compute new parameters'), selected = " ",
                        multiple = FALSE),
-
+           
            conditionalPanel(
              condition = 'input.previous == "Load previous computation"',
              h2("Import parameters from previous session:"),
@@ -99,7 +85,7 @@ ui <- navbarPage(
            ),
            conditionalPanel(
              condition = 'input.previous == "Compute new parameters"',
-
+             
              h2("Load the data and compute the parameters"),
              p("If you need a new computation for the parameters, choose a palm age, import the data",
                "and compute the new parameter values using",code("VPalmr::mod_all()"),"by following",
@@ -150,7 +136,7 @@ ui <- navbarPage(
                      #   br(),
                      #   p("Importing the files using",code("Vpalmr::import_data"),":")
                      # ),
-
+                     
                      conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
                        h2("Load data from local default file location"),
@@ -170,9 +156,9 @@ ui <- navbarPage(
                        condition = 'input.load == "Load each file separately"',
                        h2("Load data from files:"),
                        p(textOutput("architecture2", container = span)),
-
+                       
                        h3("Choose each input files:"),
-
+                       
                        fluidRow(
                          column(4,p("Parameter file (e.g. ParameterSimu):"),
                                 fileInput("param_file",NULL)),
@@ -267,10 +253,10 @@ ui <- navbarPage(
              downloadButton("downloadData", "Download")
            )
   ),
-
-
+  
+  
   # Page 2: Calling VPalm, design the plot and export OPS/OPF files ---------
-
+  
   tabPanel("OPS/OPF files making",
            tags$head(tags$style(HTML("
                             .shiny-text-output {background-color:#fff;}"))),
@@ -291,7 +277,7 @@ ui <- navbarPage(
                        "for more details."),
                tags$li("And finally make the OPS (Open Plant Scene) file to link all elements of the scene using",
                        code("Vpalmr::make_ops_all()"),".")
-
+               
              )
            ),
            p("Some parameters are needed to compute the 3D palm scenes:",
@@ -341,7 +327,7 @@ ui <- navbarPage(
              textOutput("dirtrigger2"),
              conditionalPanel(
                condition = 'output.dirtrigger2 == "Now you can set the parameters:"',
-
+               
                # Number of leaves for the mock-up:
                numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
                             value = 45, min = 3, max = 100, step = 1),
@@ -350,7 +336,7 @@ ui <- navbarPage(
                # Plant distance:
                numericInput(inputId = "plant_dist", label = "Distance between palm trees in the scene",
                             value = 9.2, min = 1, max = 100, step = 0.01),
-
+               
                # Advanced parameters:
                p("You can trigger advanced parameters if you need them, but please remember they should be
              used by advanced users only."),
@@ -365,7 +351,7 @@ ui <- navbarPage(
                    p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe
                use randomly generated palm trees for each progeny instead of the average one ?"),
                    fluidRow(
-
+                     
                      numericInput(inputId = "nbtrees",
                                   label = "Number of random trees",
                                   value = 0, min = 1, max = 100, step = 1)
@@ -382,9 +368,9 @@ ui <- navbarPage(
                       call", code("Vpalmr::design_plot()"), "as follows:"),
                      column(6,
                             code(
-                                p("library(Vpalmr)"),
-                                p("design_plot(rows = 2, cols = 1, x_dist = 9.2)")
-                              )
+                              p("library(Vpalmr)"),
+                              p("design_plot(rows = 2, cols = 1, x_dist = 9.2)")
+                            )
                      )
                    ),
                    fluidRow(
@@ -441,3 +427,5 @@ ui <- navbarPage(
            )
   )
 )
+#   )
+# )

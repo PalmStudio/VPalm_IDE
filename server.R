@@ -1,5 +1,9 @@
 server <- function(input, output, session) {
   
+  isloaded= load_vpalmr()
+  shinyjs::toggle("loading_page",condition = !isloaded)
+  shinyjs::toggle("loaded",condition = isloaded)
+
   map= reactive({
     paste("Month after planting=", input$map)
   })
