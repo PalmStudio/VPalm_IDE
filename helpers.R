@@ -6,24 +6,31 @@ load_vpalmr <- function() {
   
   package_name <- remotes:::remote_package_name(remote)
   local_sha <- remotes:::local_sha(package_name)
-  tryCatch(expr = {
-    remote_sha <- remotes:::remote_sha(remote, local_sha)
-    if (!isTRUE(force) && !remotes:::different_sha(remote_sha = remote_sha, 
-                                                   local_sha = local_sha)) {
-      message("Vpalmr is already up-to-date compared to the Github version,", 
-              "the SHA1 (", substr(remote_sha, 1L, 8L), ") has not changed since last install.\n")
-    }else{
-      remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
-    }
-  }, error= function(cond){
-    message("Could not fetch Vpalmr from Github.com at VEZY/Vpalmr. ",
-            "Check your internet connection. ",
-            "VPALM-IDE will use the current local version of Vpalmr. \n",
-            "The original error is as follows:")
-    message(cond)
-  })
-  library(Vpalmr)
-  return(TRUE)
+  test= 
+    tryCatch(expr = {
+      remote_sha <- remotes:::remote_sha(remote, local_sha)
+      if (!isTRUE(force) && !remotes:::different_sha(remote_sha = remote_sha, 
+                                                     local_sha = local_sha)) {
+        message("Vpalmr is already up-to-date compared to the Github version,", 
+                "the SHA1 (", substr(remote_sha, 1L, 8L), ") has not changed since last install.\n")
+        0
+      }else{
+        remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
+        1
+      }
+      
+    }, error= function(cond){
+      message("Could not fetch Vpalmr from Github.com at VEZY/Vpalmr. ",
+              "Check your internet connection. ",
+              "VPALM-IDE will use the current local version of Vpalmr. \n",
+              "The original error is as follows:")
+      message(cond)
+      2
+    }, finally = {
+      require(Vpalmr)
+    })
+  
+  return(test)
 }
 
 

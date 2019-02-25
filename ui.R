@@ -20,11 +20,14 @@ ui <- navbarPage(
            shinyjs::useShinyjs(),
            div(
              id = "loading_page",
-             h1("Downloading Vpalmr package (this can take a while)")
+             h1("Downloading Vpalmr package (this may take a while)")
            ),
-           div(
-             id = "loaded",
-             h2("All packages were imported, please proceed to next page.")
+           shinyjs::hidden(
+             div(
+               id = "loaded",
+               h2("All packages were imported, please proceed to next page."),
+               textOutput("loading")
+             )
            )
   ),
   tabPanel("Importing / computing VPalm parameters",

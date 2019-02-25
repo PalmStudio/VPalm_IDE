@@ -1,9 +1,22 @@
 server <- function(input, output, session) {
   
-  isloaded= load_vpalmr()
-  shinyjs::toggle("loading_page",condition = !isloaded)
-  shinyjs::toggle("loaded",condition = isloaded)
-
+  isloaded= try(load_vpalmr())
+  
+  output$loading= renderText({
+    if(isloaded==0){
+      "Vpalmr is up-to-date"
+    }else if(isloaded==1){
+      "Vpalmr was successfully updated"
+    }else if(isloaded==2|inherits(isloaded,"try-error")){
+      paste("Could not fetch Vpalmr from Github.com at VEZY/Vpalmr. ",
+            "Check your internet connection. ",
+            "VPALM-IDE will use the current local version of Vpalmr. \n")
+    }
+  })
+  
+  shinyjs::toggle("loading_page")
+  shinyjs::toggle("loaded")
+  
   map= reactive({
     paste("Month after planting=", input$map)
   })
