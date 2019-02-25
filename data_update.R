@@ -29,34 +29,7 @@ development=
 
 # Computing the MAP -------------------------------------------------------
 
-# Lookup table for transplanting date for each progeny:
-Planting_date_df= 
-  development%>%
-  select(.data$TreeNumber,.data$Transplanting_Date)%>%
-  na.omit()%>%
-  group_by(.data$TreeNumber)%>%
-  summarise(Transplanting_Date= unique(.data$Transplanting_Date))
-
-# Re-computing the MAP:
-development=
-  dplyr::left_join(development%>%select(-.data$Transplanting_Date),Planting_date_df)%>%
-  dplyr::mutate(MAP_comp= lubridate::interval(.data$Transplanting_Date,.data$Observation_Date)%/%
-                  months(1))%>%
-  group_by(.data$TreeNumber)%>%
-  arrange(.data$Observation_Date)%>%
-  dplyr::mutate(MAP_comp= ifelse(!is.na(.data$Nb_frond)&!is.na(lag(.data$Nb_frond))&
-                                   .data$Nb_frond==lag(.data$Nb_frond)&
-                                   !is.na(.data$LeafIndexRank1)&!is.na(lag(.data$LeafIndexRank1))&
-                                   .data$LeafIndexRank1==lag(.data$LeafIndexRank1),
-                                 lag(.data$MAP_comp),.data$MAP_comp))%>%
-  dplyr::mutate(MAP_comp= ifelse(!is.na(.data$Nb_frond)&!is.na(lead(.data$Nb_frond))&
-                                   .data$Nb_frond==lead(.data$Nb_frond)&
-                                   !is.na(.data$LeafIndexRank1)&!is.na(lead(.data$LeafIndexRank1))&
-                                   LeafIndexRank1==lead(.data$LeafIndexRank1),
-                                 lead(.data$MAP_comp),.data$MAP_comp))%>%ungroup()%>%
-  dplyr::mutate(MonthAfterPlanting= .data$MAP_comp)%>%
-  select(-.data$MAP_comp)
-# NB: The last two mutates are used for the case when one session is made on several different days
+development= Vpalmr::compute_MAP(x = development)
 
 # Writing the new development file with updated MAP and Transplanting_Date.
 # development%>%
@@ -167,12 +140,80 @@ test=
                       petiole_width= file.path(path_data,'Petiole_SMSE14.csv'),
                       twist= file.path(path_data,'Torsion_SMSE14.csv'), map = 60)
 
+parameter= file.path(path_data,'ParameterSimu.csv')
+development= file.path(path_data,'Development_Rep4_SMSE.csv')
+phylotaxy= file.path(path_data,'Stem_SMSE14.csv')
+declination= file.path(path_data,'AnglesC&A_SMSE_Nov14.csv')
+curvature= file.path(path_data,'LeafCurvature_SMSE14.csv')
+leaf_area= file.path(path_data,'LeafArea_monitoring_SMSE.csv')
+axial_angle= file.path(path_data,'LeafDispositionComp_SMSE14.csv')
+petiole_width= file.path(path_data,'Petiole_SMSE14.csv')
+twist= file.path(path_data,'Torsion_SMSE14.csv')
+map = 60
+
+
+df_err= 
+  test$DataAll%>%
+  filter(PosB>1.0)
+
+if(nrow(df_err)>0){
+  df_err%>%glue::glue_data("Error in RachisLength or Bposition for Tree {TreeNumber}, ",
+                           "MAP {MonthAfterPlanting}, leaf index {LeafIndex}")%>%
+  warn_inc(warn,.)
+}
+
+
+test_plot= 
+  ggplot(test$DataAll, aes(x= MonthAfterPlanting, y= PosB))+
+  facet_wrap(.~Progeny)+
+  geom_point(aes(group= TreeNumber))
+
+plotly::ggplotly(test_plot)
 
 Vpalmr::test_Area(x = test$Area, path = "C:/Users/vezy/Desktop")
 
+# Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
+#                           write_path = "../VPalm_Architecture")
+
 Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
-                          write_path = "../VPalm_Architecture/models_MAP_59.RData")
+                          write_path = "../VPalm_Architecture")
+
+make_scene(data = Palm_Param, nleaves = 45, Progeny = "DA1", ntrees= 0, 
+           path = "C:/Users/vezy/Desktop", 
+           AMAPStudio = "D:/OneDrive/Travail_AMAP/PalmStudio/VPalm_IDE",
+           overwrite = T)
+# extract_params(data = Palm_Param$input, model = Palm_Param$model, leaves = 45,)
+
+test_plot=
+  ggplot(test$DataAll, aes(x= MonthAfterPlanting, y= PosB))+
+  facet_wrap(.~Progeny)+
+  geom_point(aes(group= TreeNumber))
+plotly::ggplotly(test_plot)
+
+
+OPFs= make_opf_all(parameter = "C:/Users/vezy/Desktop/VPalm_inputs",
+                   opf = "C:/Users/vezy/Desktop/scenes/opf",
+                   AMAPStudio = "vpalm.jar", overwrite = T)
+
+
+
+out=
+    make_opf(parameter = "C:/Users/vezy/Desktop/VPalm_inputs/DA1_Average_MAP_60_2.txt",
+             opf = "C:/Users/vezy/Desktop/scenes/opf/DA1_Average_MAP_60_2.opf",
+             AMAPStudio = "D:/OneDrive/Travail_AMAP/PalmStudio/VPalm_IDE",
+             overwrite = T)
 
 
 # There are too much missing FrondRank values (no values on new data). How can we compute it ? We 
 # need it for the estimation of the rachis length.
+
+
+
+
+
+# Adding tests  -----------------------------------------------------------
+
+test2= test_pos_on_leaflet_all(test$Area)
+test2
+
+
