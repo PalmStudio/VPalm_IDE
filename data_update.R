@@ -209,3 +209,35 @@ list(
   decSlopeA= "Slope at inflexion point of the declination angle (i.e leaf curvature) at A point ~ at C point (degrees.degrees-1)",
   decInflA= "Inflexion point of the declination angle at A point ~ at C point (degrees)"
 )
+
+
+
+Palm_Param= list(custom= VPalm_list$Average)
+
+make_scene_custom(x = Palm_Param()$custom, path = parseDirPath(volumes, dir()),
+                  AMAPStudio = getwd(),
+                  planting_design= if(!isTruthy(input$planting_design)){
+                    NULL
+                  }else{
+                    custom_design()
+                  },
+                  
+                  progress=function(x){
+                    updateProgress(detail = x, progress_obj = progress_obj,
+                                   steps = 7) 
+                  })
+
+
+Palm_Param= readRDS(file = "../VPalm_Architecture/models_MAP_60.RData")
+VPalm_list = Vpalmr::extract_progeny(data = Palm_Param$input,
+                                     model = Palm_Param$model, n = 0, leaves = 45, seed = NULL,
+                                     average = T)
+
+saveRDS(VPalm_list$DA1$Average,"1-Data/VPalm_list/vpalm_template.rds")
+
+
+
+scene= make_scene_custom(x = VPalm_list$DA1, path = "C:/Users/vezy/Desktop", 
+                         AMAPStudio = getwd(),plant_dist = 9.2)
+
+

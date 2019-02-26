@@ -238,37 +238,41 @@ server <- function(input, output, session) {
   })
   
   
+  output$parameters_description= 
+    renderDataTable({default_params()})
   
   # Reading the parameters template:
   template= reactive(readRDS("1-Data/VPalm_list/vpalm_template.rds"))
-  
+
   Palm_Param_custom= 
     reactive({
       param_list= template()
-      param_list$nbFronds_M= input$nbleaves_custom
-      param_list$nbLeafEmitted= input$MAP_custom*2.5
+      # param_list$nbFronds_M= input$nbleaves_custom
+      param_list$nbLeafEmitted= round(input$MAP_custom*2.5)
       param_list$rachisLengthIntercept= 
         input$rachisLengthRank1 - input$rachisLengthSlope * param_list$nbLeafEmitted
       param_list$rachisLengthSlope= input$rachisLengthSlope
       param_list$nbMax= input$nbMax
       param_list$nbSlope= input$nbSlope
       param_list$nbInfl= input$nbInfl
-      param_list$lenfletLengthAtBIntercept= input$lenfletLengthAtBIntercept
+      param_list$lenfletLengthAtBIntercept= 
+        input$B_length_Rank1 - input$rachisLengthRank1 * input$leafletLengthAtBSlope
       param_list$leafletLengthAtBSlope= input$leafletLengthAtBSlope
-
-      param_list$bWidthIntercept= 
-        input$bWidthIntercept
-      
+      param_list$bWidthIntercept=
+        input$B_width_Rank1 - input$rachisLengthRank1 * input$bWidthSlope
       param_list$bWidthSlope= input$bWidthSlope
       param_list$xm_intercept= input$xm_intercept
       param_list$xm_slope= input$xm_slope
       param_list$ym_intercept= input$ym_intercept
       param_list$ym_slope= input$ym_slope
       param_list$petioleRachisRatio_M= input$petioleRachisRatio_M
-      param_list$nbFronds_M= input$nbFronds_M
       param_list$decMaxA= input$decMaxA
       param_list$decSlopeA= input$decSlopeA
       param_list$decInflA= input$decInflA
+      param_list$decliCintercept= input$decliCintercept
+      param_list$decliCslope= input$decliCslope
+      
+      list(custom= param_list)
     })
   
   # Find the right Palm_Param_* according to the choices of the user  ---------
@@ -420,16 +424,11 @@ server <- function(input, output, session) {
         progress_obj$set(message = "Making scene:", value = 0)
         # Close the progress when this reactive exits (even if there's an error)
         on.exit(progress_obj$close())
-        if(!is.null(Palm_Param())){
+        if(length(Palm_Param())==2){
           scene= 
             Vpalmr::make_scene(data = Palm_Param(),
                                nleaves = input$nleaves,
-                               path = 
-                                 if(length(parseDirPath(volumes, dir())>0)){
-                                   parseDirPath(volumes, dir())
-                                 }else{
-                                   parseDirPath(volumes, dir())
-                                 }, 
+                               path = parseDirPath(volumes, dir()), 
                                Progeny = 
                                  if(input$prog=="All progenies"){
                                    NULL
@@ -453,6 +452,22 @@ server <- function(input, output, session) {
                                                 steps = 7) 
                                })
           message("Vpalmr::extract_progeny() ran successfully")
+        }else if(input$save_vpalm>0){
+          scene= 
+            make_scene_custom(x = Palm_Param()$custom, 
+                              path = parseDirPath(volumes, dir()),
+                              AMAPStudio = getwd(),
+                              planting_design= 
+                                if(!isTruthy(input$planting_design)){
+                                  NULL
+                                }else{
+                                  custom_design()
+                                },  
+                              plant_dist= input$plant_dist,
+                              progress=function(x){
+                                updateProgress(detail = x, progress_obj = progress_obj,
+                                               steps = 7) 
+                              })
         }else{
           scene= NULL
         }
@@ -561,27 +576,6 @@ server <- function(input, output, session) {
       "Selection: ", xy_range_str(input$plot_brush_rep)
     )
   })
-  
-  
-  
-  # Page 3: user-defined values for main parameters -------------------------
-  
-  output$parameters_description= 
-    renderDataTable({default_params()})
-  
-  # output$my_table <- renderDataTable(
-  #   default_params(), selection = "none", 
-  #   options = list(searching = FALSE, paging=FALSE, ordering=FALSE, dom="t"), 
-  #   server = FALSE, escape = FALSE, rownames= FALSE, colnames=c("", ""), 
-  #   callback = JS("table.rows().every(function(i, tab, row) {
-  #                 var $this = $(this.node());
-  #                 $this.attr('id', this.data()[0]);
-  #                 $this.addClass('shiny-input-container');
-  #                 });
-  #                 Shiny.unbindAll(table.table().node());
-  #                 Shiny.bindAll(table.table().node());")
-  # )
-  
 }
 
 # Run the application 
