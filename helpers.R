@@ -94,21 +94,21 @@ polygon_coord= function(data){
 default_params= function(){
   data.frame(
     Parameter= c(
-      'nbLeafEmitted', 'rachisLengthIntercept', 'rachisLengthSlope', 'Nbmax', 'nbSlope', 
-      'nbInfl', 'lenfletLengthAtBIntercept', 'leafletLengthAtBSlope', 'bWidthIntercept',
+      'nbLeafEmitted', 'rachisLengthRank1', 'rachisLengthSlope', 'Nbmax', 'nbSlope', 
+      'nbInfl', 'B_length_Rank1', 'leafletLengthAtBSlope', 'B_width_Rank1',
       'bWidthSlope', 'xm_intercept', 'xm_slope', 'ym_intercept', 'ym_slope', 
       'petioleRachisRatio_M', 'nbFronds_M', 'decMaxA', 'decSlopeA', 'decInflA',
       'decliCintercept', 'decliCslope'),
     Description= c(
       'Total cumulative number of emitted leaves from planting',
-      'Intercept of the rachis length equation',
+      'Rachis length of the leaf at rank 1',
       'Slope of the rachis length equation',
       'Maximum number of leaflets per leaf',
       'Slope of the number of leaflets per leaf ~ rachis length',
       'Inflexion point of the number of leaflets per leaf ~ rachis length', 
-      'Intercept of the leaflet length at B point ~ rachis length', 
+      'Leaflet length at B point for the leaf at rank 1', 
       'Slope of the allometry between leaflet length at B point and rachis length', 
-      'Intercept of the leaflet width at B point ~ rachis length', 
+      'Leaflet width at B point for the leaf at rank 1', 
       'Slope of the leaflet width at B point ~ rachis length', 
       'Intercept of the relative position of maximum width on leaflet ~ position on rachis',
       'Slope of the relative position of maximum width on leaflet ~ position on rachis',
