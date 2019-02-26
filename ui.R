@@ -239,10 +239,7 @@ ui <- navbarPage(
              condition = 'input.previous == "User-defined parameters (exploration)"',
              h2("User-defined values for the main parameters:"),
              p("You can explore different architectures based on custom values for the",
-               "main input parameters for VPalm that are listed below:"),
-             dataTableOutput('parameters_description'),
-             br(),
-             p("Here you can change the values of the parameters:"),
+               "main input parameters for VPalm:"),
              fluidRow(
                column(3,numericInput(inputId = "MAP_custom", 
                                      label="MAP",
@@ -305,8 +302,12 @@ ui <- navbarPage(
                                      label= "decliCslope",
                                      value = 1.485, min = 0, max = 100, step = 0.001))
              ),
+             hr(),
              p("Save the VPalm inputs files:"),
-             actionButton(inputId = "save_vpalm",label = "Save VPalm parameters")
+             actionButton(inputId = "save_vpalm",label = "Save VPalm parameters"),
+             hr(),
+             p("To get the description and units of the variable, search in the following table:"),
+             dataTableOutput('parameters_description')
            ),
            conditionalPanel(
              condition = 'output.param_trigger == "ok"',

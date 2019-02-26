@@ -92,29 +92,61 @@ polygon_coord= function(data){
 
 
 default_params= function(){
-    data.frame(
-      nbLeafEmitted= "Total cumulative number of emitted leaves from planting",
-      rachisLengthIntercept= "Intercept of the rachis length equation (cm)",
-      rachisLengthSlope= "Slope of the rachis length equation (cm.leaves-1)",
-      Nbmax= "Maximum number of leaflets per leaf (-)",
-      nbSlope= "Slope of the number of leaflets per leaf ~ rachis length (leaflets.cm-1)",
-      nbInfl= "Inflexion point of the number of leaflets per leaf ~ rachis length (cm)",
-      lenfletLengthAtBIntercept = "Intercept of the leaflet length at B point ~ rachis length (cm)",
-      leafletLengthAtBSlope = "Slope of the allometry between leaflet length at B point and rachis length (cm.cm-1)",
-      bWidthIntercept= "Intercept of the leaflet width at B point ~ rachis length (cm)",
-      bWidthSlope= "Slope of the leaflet width at B point ~ rachis length (cm.cm-1)",
-      xm_intercept= "Intercept of the relative position of maximum width on leaflet ~ position on rachis (-)",
-      xm_slope= "Slope of the relative position of maximum width on leaflet ~ position on rachis (-)",
-      ym_intercept= "Intercept of leaflet shape ~ position on rachis (-)",
-      ym_slope= "Slope of the leaflet shape ~ position on rachis (-)",
-      petioleRachisRatio_M= "Ratio of the petiole length to rachis length (cm.cm-1)",
-      nbFronds_M= "Number of green leaves on the palm (leaves)",
-      decMaxA= "Maximum declination angle (i.e leaf curvature) at point A (degrees)",
-      decSlopeA= "Slope at inflexion point of the declination angle (i.e leaf curvature) at A point ~ at C point (degrees.degrees-1)",
-      decInflA= "Inflexion point of the declination angle at A point ~ at C point (degrees)",
-      decliCintercept = "Intercept of the declination angle (i.e leaf curvature) at C point ~ leaf rank (degrees)",
-      decliCslope = "Slope of the declination angle (i.e leaf curvature) at C point ~ leaf rank (degrees.rank-1)"
-    )%>%tidyr::gather()  
+  data.frame(
+    Parameter= c(
+      'nbLeafEmitted', 'rachisLengthIntercept', 'rachisLengthSlope', 'Nbmax', 'nbSlope', 
+      'nbInfl', 'lenfletLengthAtBIntercept', 'leafletLengthAtBSlope', 'bWidthIntercept',
+      'bWidthSlope', 'xm_intercept', 'xm_slope', 'ym_intercept', 'ym_slope', 
+      'petioleRachisRatio_M', 'nbFronds_M', 'decMaxA', 'decSlopeA', 'decInflA',
+      'decliCintercept', 'decliCslope'),
+    Description= c(
+      'Total cumulative number of emitted leaves from planting',
+      'Intercept of the rachis length equation',
+      'Slope of the rachis length equation',
+      'Maximum number of leaflets per leaf',
+      'Slope of the number of leaflets per leaf ~ rachis length',
+      'Inflexion point of the number of leaflets per leaf ~ rachis length', 
+      'Intercept of the leaflet length at B point ~ rachis length', 
+      'Slope of the allometry between leaflet length at B point and rachis length', 
+      'Intercept of the leaflet width at B point ~ rachis length', 
+      'Slope of the leaflet width at B point ~ rachis length', 
+      'Intercept of the relative position of maximum width on leaflet ~ position on rachis',
+      'Slope of the relative position of maximum width on leaflet ~ position on rachis',
+      'Intercept of leaflet shape ~ position on rachis', 
+      'Slope of the leaflet shape ~ position on rachis',
+      'Ratio of the petiole length to rachis length', 
+      'Number of green leaves on the palm', 
+      'Maximum declination angle (i.e leaf curvature) at point A', 
+      'Slope at inflexion point of the declination angle (i.e leaf curvature) at A point ~ at C point', 
+      'Inflexion point of the declination angle at A point ~ at C point', 
+      'Intercept of the declination angle (i.e leaf curvature) at C point ~ leaf rank', 
+      'Slope of the declination angle (i.e leaf curvature) at C point ~ leaf rank'
+    ),
+    Unit=
+      c(
+        'leaves',
+        'cm',
+        'cm leaves<sup>-1</sup>',
+        'leaflets', 
+        'leaflets cm<sup>-1</sup>',
+        'cm',
+        'cm',
+        'cm cm<sup>-1</sup>',
+        'cm',
+        'cm cm<sup>-1</sup>',
+        '-',
+        '-',
+        '-',
+        '-',
+        'cm cm<sup>-1</sup>',
+        'leaves',
+        'degrees',
+        'degrees degrees<sup>-1</sup>',
+        'degrees',
+        'degrees',
+        'degrees rank<sup>-1</sup>'
+      )
+  )
 }
 
 

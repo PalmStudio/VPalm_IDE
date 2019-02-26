@@ -239,7 +239,7 @@ server <- function(input, output, session) {
   
   
   output$parameters_description= 
-    renderDataTable({default_params()})
+    renderDataTable({default_params()},escape = FALSE)
   
   # Reading the parameters template:
   template= reactive(readRDS("1-Data/VPalm_list/vpalm_template.rds"))

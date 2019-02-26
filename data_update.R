@@ -170,10 +170,10 @@ OPFs= make_opf_all(parameter = "C:/Users/vezy/Desktop/VPalm_inputs",
 
 
 out=
-    make_opf(parameter = "C:/Users/vezy/Desktop/VPalm_inputs/DA1_Average_MAP_60_2.txt",
-             opf = "C:/Users/vezy/Desktop/scenes/opf/DA1_Average_MAP_60_2.opf",
-             AMAPStudio = "D:/OneDrive/Travail_AMAP/PalmStudio/VPalm_IDE",
-             overwrite = T)
+  make_opf(parameter = "C:/Users/vezy/Desktop/VPalm_inputs/DA1_Average_MAP_60_2.txt",
+           opf = "C:/Users/vezy/Desktop/scenes/opf/DA1_Average_MAP_60_2.opf",
+           AMAPStudio = "D:/OneDrive/Travail_AMAP/PalmStudio/VPalm_IDE",
+           overwrite = T)
 
 
 # There are too much missing FrondRank values (no values on new data). How can we compute it ? We 
@@ -239,5 +239,11 @@ saveRDS(VPalm_list$DA1$Average,"1-Data/VPalm_list/vpalm_template.rds")
 
 scene= make_scene_custom(x = VPalm_list$DA1, path = "C:/Users/vezy/Desktop", 
                          AMAPStudio = getwd(),plant_dist = 9.2)
+
+
+test= default_params()
+
+
+paste(test$value, collapse = "', '" )
 
 
