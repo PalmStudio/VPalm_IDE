@@ -237,17 +237,56 @@ server <- function(input, output, session) {
     list(input= isolate(Palm_data_filt()), model= mods())
   })
   
+  
+  
+  # Reading the parameters template:
+  template= reactive(readRDS("1-Data/VPalm_list/vpalm_template.rds"))
+  
+  Palm_Param_custom= 
+    reactive({
+      param_list= template()
+      param_list$nbFronds_M= input$nbleaves_custom
+      param_list$nbLeafEmitted= input$MAP_custom*2.5
+      param_list$rachisLengthIntercept= 
+        input$rachisLengthRank1 - input$rachisLengthSlope * param_list$nbLeafEmitted
+      param_list$rachisLengthSlope= input$rachisLengthSlope
+      param_list$nbMax= input$nbMax
+      param_list$nbSlope= input$nbSlope
+      param_list$nbInfl= input$nbInfl
+      param_list$lenfletLengthAtBIntercept= input$lenfletLengthAtBIntercept
+      param_list$leafletLengthAtBSlope= input$leafletLengthAtBSlope
+
+      param_list$bWidthIntercept= 
+        input$bWidthIntercept
+      
+      param_list$bWidthSlope= input$bWidthSlope
+      param_list$xm_intercept= input$xm_intercept
+      param_list$xm_slope= input$xm_slope
+      param_list$ym_intercept= input$ym_intercept
+      param_list$ym_slope= input$ym_slope
+      param_list$petioleRachisRatio_M= input$petioleRachisRatio_M
+      param_list$nbFronds_M= input$nbFronds_M
+      param_list$decMaxA= input$decMaxA
+      param_list$decSlopeA= input$decSlopeA
+      param_list$decInflA= input$decInflA
+    })
+  
   # Find the right Palm_Param_* according to the choices of the user  ---------
-  # NB: either load previous or compute it
+  # NB: either load previous, compute it or user-defined values
   
   Palm_Param= reactive({
     switch(input$previous,
            "Load previous computation" = Palm_Param_previous(),
-           "Compute new parameters" = Palm_Param_computed())
+           "Compute new parameters" = Palm_Param_computed(),
+           "User-defined parameters (exploration)" = Palm_Param_custom())
   })
   
-  observeEvent(Palm_Param(), {
+  observeEvent(Palm_Param_computed(), {
     showNotification("Parameters successfully computed")
+  })
+  
+  observeEvent(Palm_Param_previous(), {
+    showNotification("Parameters successfully loaded")
   })
   
   # Return names of input and models from loaded model.Rdata for checking:
@@ -271,7 +310,7 @@ server <- function(input, output, session) {
   # trigger the display of the download button when parameters are available:
   output$param_trigger= 
     renderText({
-      ifelse(length(Palm_Param())==2,'ok','notok')
+      ifelse(length(Palm_Param())==2|input$save_vpalm>0,'ok','notok')
     })
   outputOptions(output, "param_trigger", suspendWhenHidden = FALSE)  
   
@@ -290,12 +329,18 @@ server <- function(input, output, session) {
   # Page 2: Call VPalm and build OPF/OPS files ------------------------------
   
   output$progeny = renderUI({
-    Progs= unique(Palm_Param()$input$Parameter$Progeny)
+    
+    if(length(Palm_Param())==2){
+      Progs= unique(Palm_Param()$input$Parameter$Progeny)  
+    }else if(input$save_vpalm>0){
+      Progs= "custom"
+    }
+    
     Progs_choices= 
       if(length(Progs)>1){
         c("All progenies","Average progeny",Progs)  
       }else{
-        Progs  
+        list(Progs)  
       }
     selectInput(inputId = 'prog', 'Progeny', Progs_choices)
   })
@@ -516,6 +561,26 @@ server <- function(input, output, session) {
       "Selection: ", xy_range_str(input$plot_brush_rep)
     )
   })
+  
+  
+  
+  # Page 3: user-defined values for main parameters -------------------------
+  
+  output$parameters_description= 
+    renderDataTable({default_params()})
+  
+  # output$my_table <- renderDataTable(
+  #   default_params(), selection = "none", 
+  #   options = list(searching = FALSE, paging=FALSE, ordering=FALSE, dom="t"), 
+  #   server = FALSE, escape = FALSE, rownames= FALSE, colnames=c("", ""), 
+  #   callback = JS("table.rows().every(function(i, tab, row) {
+  #                 var $this = $(this.node());
+  #                 $this.attr('id', this.data()[0]);
+  #                 $this.addClass('shiny-input-container');
+  #                 });
+  #                 Shiny.unbindAll(table.table().node());
+  #                 Shiny.bindAll(table.table().node());")
+  # )
   
 }
 

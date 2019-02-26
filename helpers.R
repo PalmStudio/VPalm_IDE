@@ -89,3 +89,28 @@ polygon_coord= function(data){
                               ifelse(x==max(x)&y==min(y),4,3))))%>%
     arrange(v_id,pos)
 }
+
+
+default_params= function(){
+    data.frame(
+      nbLeafEmitted= "Total cumulative number of emitted leaves from planting",
+      rachisLengthIntercept= "Intercept of the rachis length equation (cm)",
+      rachisLengthSlope= "Slope of the rachis length equation (cm.leaves-1)",
+      Nbmax= "Maximum number of leaflets per leaf (-)",
+      nbSlope= "Slope of the number of leaflets per leaf ~ rachis length (leaflets.cm-1)",
+      nbInfl= "Inflexion point of the number of leaflets per leaf ~ rachis length (cm)",
+      lenfletLengthAtBIntercept = "Intercept of the leaflet length at B point ~ rachis length (cm)",
+      leafletLengthAtBSlope = "Slope of the allometry between leaflet length at B point and rachis length (cm.cm-1)",
+      bWidthIntercept= "Intercept of the leaflet width at B point ~ rachis length (cm)",
+      bWidthSlope= "Slope of the leaflet width at B point ~ rachis length (cm.cm-1)",
+      xm_intercept= "Intercept of the relative position of maximum width on leaflet ~ position on rachis (-)",
+      xm_slope= "Slope of the relative position of maximum width on leaflet ~ position on rachis (-)",
+      ym_intercept= "Intercept of leaflet shape ~ position on rachis (-)",
+      ym_slope= "Slope of the leaflet shape ~ position on rachis (-)",
+      petioleRachisRatio_M= "Ratio of the petiole length to rachis length (cm.cm-1)",
+      nbFronds_M= "Number of green leaves on the palm (leaves)",
+      decMaxA= "Maximum declination angle (i.e leaf curvature) at point A (degrees)",
+      decSlopeA= "Slope at inflexion point of the declination angle (i.e leaf curvature) at A point ~ at C point (degrees.degrees-1)",
+      decInflA= "Inflexion point of the declination angle at A point ~ at C point (degrees)"
+    )%>%tidyr::gather()  
+}

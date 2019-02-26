@@ -62,8 +62,10 @@ ui <- navbarPage(
            
            br(),
            p("Load previous computation or make a new one ?"),
-           selectInput("previous", "Choose here:", c(" ","Load previous computation",
-                                                     'Compute new parameters'), selected = " ",
+           selectInput("previous", "Choose here:", 
+                       c(" ","Load previous computation",
+                         'Compute new parameters',
+                         "User-defined parameters (exploration)"), selected = " ",
                        multiple = FALSE),
            
            conditionalPanel(
@@ -98,11 +100,6 @@ ui <- navbarPage(
                tags$li(
                  h3("Please choose the desired palm age for the data import:"),
                  textInput('map', 'Desired palm age in months after planting:'),
-                 # sliderInput("map",
-                 #             "Desired palm age in months after planting:",
-                 #             min = 1,
-                 #             max = 47,
-                 #             value = 47),
                  p("Data will be prepared with the desired palm age +/- 20 months")
                ),
                tags$li(
@@ -129,16 +126,6 @@ ui <- navbarPage(
                        textOutput("data_path_info2"),
                        verbatimTextOutput("data_path_info3")
                      ),
-                     # conditionalPanel(
-                     #   condition = 'output.data_path_trigger == "ok"',
-                     #   br(),
-                     #   p("Here is the folder you chose:"),
-                     #   verbatimTextOutput("dir_data"), br(),
-                     #   p("Here is a list of the data in the folder:"),
-                     #   verbatimTextOutput("files_data"), br(),
-                     #   br(),
-                     #   p("Importing the files using",code("Vpalmr::import_data"),":")
-                     # ),
                      
                      conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
@@ -247,6 +234,79 @@ ui <- navbarPage(
                  )
                )
              )
+           ),
+           conditionalPanel(
+             condition = 'input.previous == "User-defined parameters (exploration)"',
+             h2("User-defined values for the main parameters:"),
+             p("You can explore different architectures based on custom values for the",
+               "main input parameters for VPalm that are listed below:"),
+             # DT::dataTableOutput('my_table'),
+             br(),
+             fluidRow(
+               
+               column(3,numericInput(inputId = "nbleaves_custom", 
+                                     label="nbFronds_M",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "MAP_custom", 
+                                     label="MAP",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "rachisLengthRank1", 
+                                     label= "rachisLengthRank1",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "rachisLengthSlope", 
+                                     label= "rachisLengthSlope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "nbMax", 
+                                     label= "nbMax",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "nbSlope", 
+                                     label= "nbSlope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "nbInfl", 
+                                     label= "nbInfl",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "lenfletLengthAtBIntercept", 
+                                     label= "lenfletLengthAtBIntercept",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "leafletLengthAtBSlope", 
+                                     label=  "leafletLengthAtBSlope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "bWidthIntercept", 
+                                     label= "bWidthIntercept",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "bWidthSlope", 
+                                     label= "bWidthSlope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "xm_intercept", 
+                                     label= "xm_intercept",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "xm_slope", 
+                                     label= "xm_slope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "ym_intercept", 
+                                     label= "ym_intercept",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "ym_slope", 
+                                     label= "ym_slope",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "petioleRachisRatio_M", 
+                                     label= "petioleRachisRatio_M",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "nbFronds_M", 
+                                     label= "nbFronds_M",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "decMaxA", 
+                                     label= "decMaxA",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "decSlopeA", 
+                                     label= "decSlopeA",
+                                     value = 9.2, min = 1, max = 100, step = 0.01)),
+               column(3,numericInput(inputId = "decInflA", 
+                                     label= "decInflA",
+                                     value = 9.2, min = 1, max = 100, step = 0.01))
+             ),
+             p("Save the VPalm inputs files:"),
+             actionButton(inputId = "save_vpalm",label = "Save VPalm parameters")
            ),
            conditionalPanel(
              condition = 'output.param_trigger == "ok"',
@@ -430,5 +490,3 @@ ui <- navbarPage(
            )
   )
 )
-#   )
-# )
