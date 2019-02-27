@@ -399,9 +399,10 @@ server <- function(input, output, session) {
     }
   )
   
+  
   output$design_ex=
     renderTable(
-      Vpalmr::design_plot(rows = 2, cols = 1, x_dist = 9.2)$design%>%
+      Vpalmr::design_plot(rows = 2, cols = 1, x_dist = 9.21)$design%>%
         dplyr::select(.data$x,.data$y,.data$z,.data$xmin, .data$ymin,
                       .data$xmax, .data$ymax,.data$scale,
                       .data$inclinationAzimut,.data$inclinationAngle,
@@ -464,6 +465,11 @@ server <- function(input, output, session) {
                                   custom_design()
                                 },  
                               plant_dist= input$plant_dist,
+                              name= if(isTruthy(input$custom_name)){
+                                input$custom_name  
+                              }else{
+                                NULL
+                              },
                               progress=function(x){
                                 updateProgress(detail = x, progress_obj = progress_obj,
                                                steps = 7) 

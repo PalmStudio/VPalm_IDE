@@ -151,13 +151,16 @@ default_params= function(){
 
 
 make_scene_custom= function(x, path, AMAPStudio, planting_design= NULL, 
-                            plant_dist= 9.2, progress= NULL){
+                            plant_dist= 9.2, name= NULL, progress= NULL){
   # As make_scene but for already-formated VPalm outputs for one tree only, comming
   # from user-input. 
+  if(is.null(name)){
+    name= "custom"
+  }
   VPalm_in = format_tree(data = x)
   up_progress(progress, "format_tree")
   params = write_tree(data = VPalm_in, path = file.path(path,"VPalm_inputs"),
-                      name= "custom", verbose = F, overwrite = TRUE)
+                      name= name, verbose = F, overwrite = TRUE)
   up_progress(progress, "write_tree")
   if(params) {
     message("VPalm parameters file was successfully written in: ", 
@@ -167,8 +170,8 @@ make_scene_custom= function(x, path, AMAPStudio, planting_design= NULL,
   }
   
   MAP= VPalm_in$value[grep("Modelled Months After Planting", VPalm_in$name)]
-  OPFs = make_opf(parameter = file.path(path, "VPalm_inputs", paste0("custom_MAP_",MAP,".txt")), 
-                  opf = file.path(path, "scenes","opf",paste0("custom_Average_MAP_",MAP,".opf")),
+  OPFs = make_opf(parameter = file.path(path, "VPalm_inputs", paste0(name,"_MAP_",MAP,".txt")), 
+                  opf = file.path(path, "scenes","opf",paste0(name,"_Average_MAP_",MAP,".opf")),
                   AMAPStudio = AMAPStudio, overwrite = TRUE)
   up_progress(progress, "make_opf")
   
@@ -178,9 +181,9 @@ make_scene_custom= function(x, path, AMAPStudio, planting_design= NULL,
   }
   up_progress(progress, "design_plot")
   
-  format_ops(design = planting_design, Progeny = "custom", map = MAP,
+  format_ops(design = planting_design, Progeny = name, map = MAP,
              average = TRUE) %>% 
-    write_ops(file.path(path, "scenes",paste0("custom", "_MAP_",MAP, ".ops")), 
+    write_ops(file.path(path, "scenes",paste0(name, "_MAP_",MAP, ".ops")), 
               overwrite = TRUE)
   up_progress(progress, "make_ops_all")
   

@@ -302,6 +302,8 @@ ui <- navbarPage(
                                      label= "decliCslope",
                                      value = 1.485, min = 0, max = 100, step = 0.001))
              ),
+             p("Set the name of your output here:"),
+             textInput(inputId = "custom_name", label= "name"),
              hr(),
              p("Save the VPalm inputs files:"),
              actionButton(inputId = "save_vpalm",label = "Save VPalm parameters"),
