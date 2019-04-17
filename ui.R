@@ -1,5 +1,6 @@
-
 .libPaths("R-Portable/library")
+# Mandatory to load the packages per session because VPalmr installation
+# can potentially have to re-install them, so we need them to not be loaded before
 pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles','shinyjs')
 lapply(pack, function(x){
   if(!require(x, character.only = T, lib.loc = "R-Portable/library")){
@@ -9,7 +10,6 @@ lapply(pack, function(x){
   require(x, character.only = T)
 })
 
-# require(Vpalmr)
 source("helpers.R")
 
 # Define UI for application that draws a histogram

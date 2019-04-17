@@ -5,6 +5,17 @@ load_vpalmr <- function() {
                                   auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
   
   package_name <- remotes:::remote_package_name(remote)
+  
+  # Checking for dependencies:
+  deps= remotes::dev_package_deps(pkgdir = file.path(.libPaths(),"Vpalmr")[1])
+  # And unloading them if they need a re-install:
+  pkg_to_install= deps$package[deps$diff!=0]
+  if(length(pkg_to_install)>0){
+    lapply(pkg_to_install, function(x){
+      detach(paste0("package:",x), unload=TRUE)
+    })
+  }
+    
   local_sha <- remotes:::local_sha(package_name)
   test= 
     tryCatch(expr = {
@@ -15,7 +26,8 @@ load_vpalmr <- function() {
                 "the SHA1 (", substr(remote_sha, 1L, 8L), ") has not changed since last install.\n")
         0
       }else{
-        remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
+        remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4",
+                                upgrade = "always")
         1
       }
       
@@ -29,6 +41,13 @@ load_vpalmr <- function() {
     }, finally = {
       require(Vpalmr)
     })
+  
+  # Reload detached packages
+  if(length(pkg_to_install)>0){
+    lapply(pkg_to_install, function(x){
+      require(x)
+    })
+  }
   
   return(test)
 }

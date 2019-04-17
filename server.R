@@ -243,7 +243,7 @@ server <- function(input, output, session) {
   
   # Reading the parameters template:
   template= reactive(readRDS("1-Data/VPalm_list/vpalm_template.rds"))
-
+  
   Palm_Param_custom= 
     reactive({
       param_list= template()
@@ -498,18 +498,18 @@ server <- function(input, output, session) {
     
     plot_design%>%
       mutate(image= 'www/palm_tiny.png')%>%
-      ggplot(aes(x= x, y= y))+
-      coord_fixed()+
-      geom_point()+
-      geom_image(aes(image= image), size= input$palm_size)+
-      geom_point(aes(color= "Palm tree center"))+
-      geom_polygon(data= polygon_coord(plot_design), 
-                   aes(x= x, y= y, fill= "Plot limits", 
-                       color= "Plot limits"), alpha= 0.2)+
-      ylim(low= ranges[1], high= ranges[2])+
-      xlim(low= ranges[1], high= ranges[2])+
-      labs(colour = "", fill= "")+
-      theme(legend.position="bottom")
+      ggplot2::ggplot(ggplot2::aes(x= x, y= y))+
+      ggplot2::coord_fixed()+
+      ggplot2::geom_point()+
+      ggimage::geom_image(ggplot2::aes(image= image), size= input$palm_size)+
+      ggplot2::geom_point(ggplot2::aes(color= "Palm tree center"))+
+      ggplot2::geom_polygon(data= polygon_coord(plot_design), 
+                            ggplot2::aes(x= x, y= y, fill= "Plot limits", 
+                                         color= "Plot limits"), alpha= 0.2)+
+      ggplot2::ylim(low= ranges[1], high= ranges[2])+
+      ggplot2::xlim(low= ranges[1], high= ranges[2])+
+      ggplot2::labs(colour = "", fill= "")+
+      ggplot2::theme(legend.position="bottom")
   })
   
   output$plot_info <- renderText({
@@ -561,16 +561,17 @@ server <- function(input, output, session) {
     
     design%>%
       mutate(image= 'www/palm_tiny.png')%>%
-      ggplot(aes(x= .data$x, y= .data$y))+
-      geom_image(aes(image= image), size= input$palm_size/3)+
-      geom_point(aes(color= "Palm tree center"))+
-      ylim(low= ranges_full[1], high= ranges_full[2])+
-      xlim(low= ranges_full[1], high= ranges_full[2])+
-      theme(legend.position="bottom")+
-      labs(fill= "Voronoï index", x= "x coordinate (m)", y= "y coordinate (m)")+
-      geom_polygon(data= voronoi_stands, aes(x= x, y= y, fill= v_id, color= v_id), alpha= 0.2)+
-      guides(color= FALSE)+
-      coord_fixed()
+      ggplot2::ggplot(ggplot2::aes(x= .data$x, y= .data$y))+
+      ggimage::geom_image(ggplot2::aes(image= image), size= input$palm_size/3)+
+      ggplot2::geom_point(ggplot2::aes(color= "Palm tree center"))+
+      ggplot2::ylim(low= ranges_full[1], high= ranges_full[2])+
+      ggplot2::xlim(low= ranges_full[1], high= ranges_full[2])+
+      ggplot2::theme(legend.position="bottom")+
+      ggplot2::labs(fill= "Voronoï index", x= "x coordinate (m)", y= "y coordinate (m)")+
+      ggplot2::geom_polygon(data= voronoi_stands, 
+                            ggplot2::aes(x= x, y= y, fill= v_id, color= v_id), alpha= 0.2)+
+      ggplot2::guides(color= FALSE)+
+      ggplot2::coord_fixed()
   })
   
   
