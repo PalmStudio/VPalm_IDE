@@ -176,11 +176,11 @@ make_scene_custom= function(x, path, AMAPStudio, planting_design= NULL,
   if(is.null(name)){
     name= "custom"
   }
-  VPalm_in = format_tree(data = x)
-  up_progress(progress, "format_tree")
-  params = write_tree(data = VPalm_in, path = file.path(path,"VPalm_inputs"),
-                      name= name, verbose = F, overwrite = TRUE)
-  up_progress(progress, "write_tree")
+  VPalm_in = Vpalmr::format_tree(data = x)
+  Vpalmr::up_progress(progress, "format_tree")
+  params = Vpalmr::write_tree(data = VPalm_in, path = file.path(path,"VPalm_inputs"),
+                              name= name, verbose = F, overwrite = TRUE)
+  Vpalmr::up_progress(progress, "write_tree")
   if(params) {
     message("VPalm parameters file was successfully written in: ", 
             file.path(path, "1-VPalm_inputs"))
@@ -189,22 +189,22 @@ make_scene_custom= function(x, path, AMAPStudio, planting_design= NULL,
   }
   
   MAP= VPalm_in$value[grep("Modelled Months After Planting", VPalm_in$name)]
-  OPFs = make_opf(parameter = file.path(path, "VPalm_inputs", paste0(name,"_MAP_",MAP,".txt")), 
-                  opf = file.path(path, "scenes","opf",paste0(name,"_Average_MAP_",MAP,".opf")),
-                  AMAPStudio = AMAPStudio, overwrite = TRUE)
-  up_progress(progress, "make_opf")
+  OPFs = Vpalmr::make_opf(parameter = file.path(path, "VPalm_inputs", paste0(name,"_MAP_",MAP,".txt")), 
+                                     opf = file.path(path, "scenes","opf",paste0(name,"_Average_MAP_",MAP,".opf")),
+                                     AMAPStudio = AMAPStudio, overwrite = TRUE)
+  Vpalmr::up_progress(progress, "make_opf")
   
   if(is.null(planting_design)){
-    planting_design = design_plot(rows = 1, cols = 1, x0 = 0, 
-                                  x_dist = plant_dist)$design
+    planting_design = Vpalmr::design_plot(rows = 1, cols = 1, x0 = 0, 
+                                          x_dist = plant_dist)$design
   }
-  up_progress(progress, "design_plot")
+  Vpalmr::up_progress(progress, "design_plot")
   
-  format_ops(design = planting_design, Progeny = name, map = MAP,
-             average = TRUE) %>% 
-    write_ops(file.path(path, "scenes",paste0(name, "_MAP_",MAP, ".ops")), 
-              overwrite = TRUE)
-  up_progress(progress, "make_ops_all")
+  Vpalmr::format_ops(design = planting_design, Progeny = name, map = MAP,
+                     average = TRUE) %>% 
+    Vpalmr::write_ops(file.path(path, "scenes",paste0(name, "_MAP_",MAP, ".ops")), 
+                      overwrite = TRUE)
+  Vpalmr::up_progress(progress, "make_ops_all")
   
   list(plot_design= planting_design)
 }

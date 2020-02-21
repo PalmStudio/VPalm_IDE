@@ -248,6 +248,7 @@ server <- function(input, output, session) {
     reactive({
       param_list= template()
       # param_list$nbFronds_M= input$nbleaves_custom
+      param_list$MAP_requested= input$MAP_custom
       param_list$nbLeafEmitted= round(input$MAP_custom*2.5)
       param_list$rachisLengthIntercept= 
         input$rachisLengthRank1 - input$rachisLengthSlope * param_list$nbLeafEmitted
