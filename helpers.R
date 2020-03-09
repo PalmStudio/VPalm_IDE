@@ -10,9 +10,12 @@ load_vpalmr <- function() {
   deps= remotes::dev_package_deps(pkgdir = file.path(.libPaths(),"Vpalmr")[1])
   # And unloading them if they need a re-install:
   pkg_to_install= deps$package[deps$diff!=0]
+  
+  # detach("package:Vpalmr", unload=TRUE)
+  
   if(length(pkg_to_install)>0){
     lapply(pkg_to_install, function(x){
-      detach(paste0("package:",x), unload=TRUE)
+      try(detach(paste0("package:",x), unload=TRUE))
     })
   }
     
