@@ -8,8 +8,7 @@ server <- function(input, output, session) {
     }else if(isloaded==1){
       "Vpalmr was successfully updated"
     }else if(isloaded==2|inherits(isloaded,"try-error")){
-      paste("Could not fetch Vpalmr from Github.com at VEZY/Vpalmr. ",
-            "Check your internet connection. ",
+      paste("Could not install Vpalmr (could not  fetch from Github.com at VEZY/Vpalmr., or could not install).",
             "VPALM-IDE will use the current local version of Vpalmr. \n")
     }
   })
@@ -178,8 +177,8 @@ server <- function(input, output, session) {
     })
   }) 
   
-  output$data=
-    renderDataTable({
+  output$datashow=
+    DT::renderDataTable({
       Palm_data_filt()$Parameter
     }, options = list(pageLength = 5))
   

@@ -1,7 +1,7 @@
 .libPaths("R-Portable/library")
 # Mandatory to load the packages per session because VPalmr installation
 # can potentially have to re-install them, so we need them to not be loaded before
-pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles','shinyjs','magrittr')
+pack= c('shiny','ggplot2','ggimage','dplyr','shinyFiles','shinyjs','magrittr',"DT")
 lapply(pack, function(x){
   if(!require(x, character.only = T, lib.loc = "R-Portable/library")){
     install.packages(x, repos= "https://cloud.r-project.org",
@@ -9,6 +9,7 @@ lapply(pack, function(x){
     require(x, character.only = T, lib.loc = "R-Portable/library")
   }
 })
+isloaded= try(load_vpalmr())
 
 source("helpers.R")
 
@@ -209,7 +210,7 @@ ui <- navbarPage(
                  tags$li(
                    h3("Glimpse of the imported data"),
                    p("Here is a preview of the parameter file from the data for you to control:"),
-                   dataTableOutput("data")
+                   DT::dataTableOutput("datashow")
                  )
                ),
                conditionalPanel(
