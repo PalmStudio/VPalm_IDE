@@ -75,7 +75,7 @@ server <- function(input, output, session) {
   folder_path=
     reactive({
       if(input$load == "Load data from default folder"){
-        file.path(getwd(), "1-Data/Archi")  
+        file.path(getwd(), "0-data/Archi")  
       }else{
         parseDirPath(volumes_data, dir_data())
       }
@@ -241,7 +241,7 @@ server <- function(input, output, session) {
     renderDataTable({default_params()},escape = FALSE)
   
   # Reading the parameters template:
-  template= reactive(readRDS("1-Data/VPalm_list/vpalm_template.rds"))
+  template= reactive(readRDS("0-data/VPalm_list/vpalm_template.rds"))
   
   Palm_Param_custom= 
     reactive({

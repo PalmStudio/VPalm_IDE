@@ -53,7 +53,7 @@ ui <- navbarPage(
                                 app using",code("VPalmr::mod_all()"),
                        ". Loading the data can also be done in two ways:"),
                tags$ul(
-                 tags$li("From the default folder in the Shiny application (in 1-Data/Archi)"),
+                 tags$li("From the default folder in the Shiny application (in 0-data/Archi)"),
                  tags$li("Or by loading each file independently")
                )
              )

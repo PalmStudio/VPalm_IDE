@@ -31,7 +31,7 @@ and improved to add an installer for windows users.
 To install VPALM\_IDE, simply download this repository wherever you
 want, and download the data folder. The data folder is available to
 PT-SMART partners only, or upon request (need clearance from PT-SMART +
-CIRAD). For partners, just download the “1-Data” folder from Alfresco,
+CIRAD). For partners, just download the “0-data” folder from Alfresco,
 and put it at the root of this folder.
 
 ### Developer

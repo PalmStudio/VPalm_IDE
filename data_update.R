@@ -17,10 +17,10 @@ library(plotly)
 
 # Importing the files -----------------------------------------------------
 
-parameters= fread("1-Data/Archi/ParameterSimu.csv", data.table = F)
+parameters= fread("0-data/Archi/ParameterSimu.csv", data.table = F)
 
 development= 
-  fread("1-Data/Archi/Development_Rep4_SMSE.csv", data.table = F, sep=';', dec=',', fill= T)%>%
+  fread("0-data/Archi/Development_Rep4_SMSE.csv", data.table = F, sep=';', dec=',', fill= T)%>%
   mutate(Transplanting_Date= lubridate::dmy(.data$Transplanting_Date),
          Observation_Date= lubridate::dmy(.data$Observation_Date))
 
@@ -36,7 +36,7 @@ development= Vpalmr::compute_MAP(x = development)
 #   arrange(Trial, Progeny, Observation_Date, TreeNumber)%>%
 #   mutate(Observation_Date= format(Observation_Date, "%d/%m/%Y"),
 #          Transplanting_Date= format(Transplanting_Date, "%d/%m/%Y"))%>%
-#   data.table::fwrite("1-Data/Archi/Development_Rep4_SMSE.csv", sep=";")
+#   data.table::fwrite("0-data/Archi/Development_Rep4_SMSE.csv", sep=";")
 
 
 # Updating the parameter file for MAP: ------------------------------------
@@ -94,12 +94,12 @@ parameters2=
   mutate(Year= lubridate::year(.data$Date), Month= lubridate::month(.data$Date))%>%
   mutate(Date= format(.data$Date, '%d/%m/%Y'))
 
-# data.table::fwrite(parameters2, "1-Data/Archi/ParameterSimu.csv", sep= ";")
+# data.table::fwrite(parameters2, "0-data/Archi/ParameterSimu.csv", sep= ";")
 
 
 
 # Updating the Area file --------------------------------------------------
-area_df= data.table::fread("1-Data/Archi/LeafArea_monitoring_SMSE.csv", data.table = F, sep=';',
+area_df= data.table::fread("0-data/Archi/LeafArea_monitoring_SMSE.csv", data.table = F, sep=';',
                            fill= T, dec=".")
 is(area_df$Width)
 area_df[is.na(as.numeric(area_df$Width)),]
@@ -124,11 +124,11 @@ area_df=
                 FieldPlantingDate= format(.data$FieldPlantingDate, "%d/%m/%Y"))%>%
   select(-.data$Transplanting_Date)
 
-# data.table::fwrite(area_df, "1-Data/Archi/LeafArea_monitoring_SMSE.csv", sep=";")
+# data.table::fwrite(area_df, "0-data/Archi/LeafArea_monitoring_SMSE.csv", sep=";")
 
 # Checking if the data could be imported ----------------------------------
 
-path_data= '1-Data/Archi'
+path_data= '0-data/Archi'
 test= 
   Vpalmr::import_data(parameter= file.path(path_data,'ParameterSimu.csv'),
                       development= file.path(path_data,'Development_Rep4_SMSE.csv'),
@@ -142,10 +142,10 @@ test=
 
 Vpalmr::test_Area(x = test$Area, path = "C:/Users/vezy/Desktop")
 
-Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
+Palm_Param= compute_archi(map = 60, data_path = "0-data/Archi",
                           write_path = "../VPalm_Architecture")
 
-Palm_Param= compute_archi(map = 60, data_path = "1-Data/Archi",
+Palm_Param= compute_archi(map = 60, data_path = "0-data/Archi",
                           write_path = "../VPalm_Architecture")
 
 Palm_Param= readRDS(file = "../VPalm_Architecture/models_MAP_60.RData")
@@ -233,7 +233,7 @@ VPalm_list = Vpalmr::extract_progeny(data = Palm_Param$input,
                                      model = Palm_Param$model, n = 0, leaves = 45, seed = NULL,
                                      average = T)
 
-saveRDS(VPalm_list$DA1$Average,"1-Data/VPalm_list/vpalm_template.rds")
+saveRDS(VPalm_list$DA1$Average,"0-data/VPalm_list/vpalm_template.rds")
 
 
 
