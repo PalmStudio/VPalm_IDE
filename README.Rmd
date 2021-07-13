@@ -25,6 +25,12 @@ VPalm IDE is an R Shiny application bundled in an [Electron](https://electronjs.
 
 ## Install
 
+### User
+
+To install VPALM_IDE, simply download this repository wherever you want, and download the data folder. The data folder is available to PT-SMART partners only, or upon request (need clearance from PT-SMART + CIRAD). For partners, just download the "1-Data" folder from Alfresco, and put it at the root of this folder.
+
+### Developer
+
 To build the electron app, you need to download and install [node.js](https://nodejs.org/en/download/), and to restart your computer.
 Then, you need to download [R-portable]() so your application does not depends on external ressources. You can also follow this [link](https://sourceforge.net/projects/rportable/files/latest/download) that points to the latest release of the project. 
 
@@ -32,7 +38,7 @@ Then, clone this repository:
 
 ```bash
 # Clone this repository
-git clone https://github.com/VEZY/VPALM_IDE
+git clone https://github.com/PalmStudio/VPALM_IDE
 # Go into the repository
 cd VPALM_IDE
 ```
@@ -118,7 +124,7 @@ NB: Several interesting build options are available for the installer, see [the 
 
 ## Automatic updates
 
-It is possible to add automatic updates to the app by using a remote repository. To set it up, we can add the option `remoteReleases` (see [here](https://github.com/electron/windows-installer) for more details) and `remoteToken` if necessary. The link should point the releases folders *i.e.* the `installer-x64` folder for our example. Then electron will check for any updates automatically, dowload them and install them if necessary. Further details are available on the [Squirrel.Windows documentation](https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/readme.md). Also see [this](https://stackoverflow.com/questions/42749972/how-to-make-a-simple-updater-for-electron-application) and [this](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05) .
+It is possible to add automatic updates to the app by using a remote repository. To set it up, we can add the option `remoteReleases` (see [here](https://github.com/electron/windows-installer) for more details) and `remoteToken` if necessary. The link should point the releases folders *i.e.* the `installer-x64` folder for our example. Then electron will check for any updates automatically, dowload them and install them if necessary. Further details are available on the [Squirrel.Windows documentation](https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/readme.md). Also see [this](https://stackoverflow.com/questions/42749972/how-to-make-a-simple-updater-for-electron-application) and [this](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05).
 
 
 ## Summary

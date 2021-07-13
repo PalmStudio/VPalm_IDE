@@ -1,8 +1,7 @@
 load_vpalmr <- function() {
   
   # Test if Vpalmr is up-to-date compared to the Github version, and install it if not:
-  remote= remotes:::github_remote(repo = "VEZY/Vpalmr", ref = "master", 
-                                  auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4")
+  remote= remotes:::github_remote(repo = "PalmStudio/Vpalmr")
   
   package_name <- remotes:::remote_package_name(remote)
   
@@ -29,8 +28,7 @@ load_vpalmr <- function() {
                 "the SHA1 (", substr(remote_sha, 1L, 8L), ") has not changed since last install.\n")
         0
       }else{
-        remotes::install_github("VEZY/Vpalmr", auth_token = "71c9b59d68594c61acb7250813ef6098a381d4c4",
-                                upgrade = "always")
+        remotes::install_github("PalmStudio/Vpalmr", upgrade = "always")
         1
       }
       
