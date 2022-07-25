@@ -169,9 +169,9 @@ and
 To update the application and the installer, simply run these commands:
 
 ``` bash
- npm install
- npm run package-win
- node build.js
+npm install
+npm run package-win
+node build.js
 ```
 
 ## References

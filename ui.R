@@ -30,7 +30,7 @@ ui <- navbarPage(
            )
   ),
   tabPanel("Importing / computing VPalm parameters",
-           
+
            # Application title
            # titlePanel("Virtual Palm plants from field data"),
            # hr(),
@@ -58,15 +58,15 @@ ui <- navbarPage(
                )
              )
            ),
-           
+
            br(),
            p("Load previous computation or make a new one ?"),
-           selectInput("previous", "Choose here:", 
+           selectInput("previous", "Choose here:",
                        c(" ","Load previous computation",
                          'Compute new parameters',
                          "User-defined parameters (exploration)"), selected = " ",
                        multiple = FALSE),
-           
+
            conditionalPanel(
              condition = 'input.previous == "Load previous computation"',
              h2("Import parameters from previous session:"),
@@ -89,7 +89,7 @@ ui <- navbarPage(
            ),
            conditionalPanel(
              condition = 'input.previous == "Compute new parameters"',
-             
+
              h2("Load the data and compute the parameters"),
              p("If you need a new computation for the parameters, choose a palm age, import the data",
                "and compute the new parameter values using",code("VPalmr::mod_all()"),"by following",
@@ -125,7 +125,7 @@ ui <- navbarPage(
                        textOutput("data_path_info2"),
                        verbatimTextOutput("data_path_info3")
                      ),
-                     
+
                      conditionalPanel(
                        condition = 'input.load == "Load data from default folder"',
                        h2("Load data from local default file location"),
@@ -145,9 +145,9 @@ ui <- navbarPage(
                        condition = 'input.load == "Load each file separately"',
                        h2("Load data from files:"),
                        p(textOutput("architecture2", container = span)),
-                       
+
                        h3("Choose each input files:"),
-                       
+
                        fluidRow(
                          column(4,p("Parameter file (e.g. ParameterSimu):"),
                                 fileInput("param_file",NULL)),
@@ -240,64 +240,64 @@ ui <- navbarPage(
              p("You can explore different architectures based on custom values for the",
                "main input parameters for VPalm:"),
              fluidRow(
-               column(3,numericInput(inputId = "MAP_custom", 
+               column(3,numericInput(inputId = "MAP_custom",
                                      label="MAP",
                                      value = 60, min = 30, max = 100, step = 1)),
-               column(3,numericInput(inputId = "rachisLengthRank1", 
+               column(3,numericInput(inputId = "rachisLengthRank1",
                                      label= "rachisLengthRank1",
                                      value = 489.3226, min = 1, max = 1000, step = 0.01)),
-               column(3,numericInput(inputId = "rachisLengthSlope", 
+               column(3,numericInput(inputId = "rachisLengthSlope",
                                      label= "rachisLengthSlope",
                                      value = 2.245567, min = 0, max = 10, step = 0.000001)),
-               column(3,numericInput(inputId = "nbMax", 
+               column(3,numericInput(inputId = "nbMax",
                                      label= "nbMax",
                                      value = 139.53, min = 1, max = 1000, step = 0.01)),
-               column(3,numericInput(inputId = "nbSlope", 
+               column(3,numericInput(inputId = "nbSlope",
                                      label= "nbSlope",
                                      value = 0.002938597, min = 0, max = 1, step = 0.000000001)),
-               column(3,numericInput(inputId = "nbInfl", 
+               column(3,numericInput(inputId = "nbInfl",
                                      label= "nbInfl",
                                      value = 158.1657, min = 1, max = 100, step = 0.01)),
-               column(3,numericInput(inputId = "B_length_Rank1", 
+               column(3,numericInput(inputId = "B_length_Rank1",
                                      label= "B length Rank1",
                                      value = 95.68059, min = 1, max = 500, step = 0.00001)),
-               column(3,numericInput(inputId = "leafletLengthAtBSlope", 
+               column(3,numericInput(inputId = "leafletLengthAtBSlope",
                                      label=  "B length slope",
                                      value = 0.1407511, min = 0, max = 1, step = 0.0000001)),
                column(3,numericInput(inputId = "B_width_Rank1",
                                      label= "B width Rank 1",
                                      value = 5.331514, min = 1, max = 40, step = 0.001)),
-               column(3,numericInput(inputId = "bWidthSlope", 
+               column(3,numericInput(inputId = "bWidthSlope",
                                      label= "B width slope",
                                      value = 0.005703363, min = 0, max = 1, step = 0.00000001)),
-               column(3,numericInput(inputId = "xm_intercept", 
+               column(3,numericInput(inputId = "xm_intercept",
                                      label= "xm_intercept",
                                      value = 0.175777, min = 0, max = 1, step = 0.0000001)),
-               column(3,numericInput(inputId = "xm_slope", 
+               column(3,numericInput(inputId = "xm_slope",
                                      label= "xm_slope",
                                      value = 0.07976941, min = 0, max = 1, step = 0.0000001)),
-               column(3,numericInput(inputId = "ym_intercept", 
+               column(3,numericInput(inputId = "ym_intercept",
                                      label= "ym_intercept",
                                      value = 0.5057222, min = 0, max = 1, step = 0.0000001)),
-               column(3,numericInput(inputId = "ym_slope", 
+               column(3,numericInput(inputId = "ym_slope",
                                      label= "ym_slope",
                                      value = -0.02517757, min = -1, max = 1, step = 0.00000001)),
-               column(3,numericInput(inputId = "petioleRachisRatio_M", 
+               column(3,numericInput(inputId = "petioleRachisRatio_M",
                                      label= "petioleRachisRatio_M",
                                      value = 0.3068787, min = 0, max = 1, step = 0.0000001)),
-               column(3,numericInput(inputId = "decMaxA", 
+               column(3,numericInput(inputId = "decMaxA",
                                      label= "decMaxA",
                                      value = 180, min = 0, max = 260, step = 0.1)),
-               column(3,numericInput(inputId = "decSlopeA", 
+               column(3,numericInput(inputId = "decSlopeA",
                                      label= "decSlopeA",
                                      value = 0.01, min = 0, max = 1, step = 0.01)),
-               column(3,numericInput(inputId = "decInflA", 
+               column(3,numericInput(inputId = "decInflA",
                                      label= "decInflA",
                                      value = 41.58479, min = 1, max = 100, step = 0.00001)),
-               column(3,numericInput(inputId = "decliCintercept", 
+               column(3,numericInput(inputId = "decliCintercept",
                                      label= "decliCintercept",
                                      value = 9.072, min = 0, max = 100, step = 0.001)),
-               column(3,numericInput(inputId = "decliCslope", 
+               column(3,numericInput(inputId = "decliCslope",
                                      label= "decliCslope",
                                      value = 1.485, min = 0, max = 100, step = 0.001))
              ),
@@ -318,10 +318,10 @@ ui <- navbarPage(
              downloadButton("downloadData", "Download")
            )
   ),
-  
-  
+
+
   # Page 2: Calling VPalm, design the plot and export OPS/OPF files ---------
-  
+
   tabPanel("OPS/OPF files making",
            tags$head(tags$style(HTML("
                             .shiny-text-output {background-color:#fff;}"))),
@@ -342,7 +342,7 @@ ui <- navbarPage(
                        "for more details."),
                tags$li("And finally make the OPS (Open Plant Scene) file to link all elements of the scene using",
                        code("Vpalmr::make_ops_all()"),".")
-               
+
              )
            ),
            p("Some parameters are needed to compute the 3D palm scenes:",
@@ -392,7 +392,7 @@ ui <- navbarPage(
              textOutput("dirtrigger2"),
              conditionalPanel(
                condition = 'output.dirtrigger2 == "Now you can set the parameters:"',
-               
+
                # Number of leaves for the mock-up:
                numericInput(inputId = "nleaves", label = "Number of leaves in the OPFs",
                             value = 45, min = 3, max = 100, step = 1),
@@ -401,13 +401,13 @@ ui <- navbarPage(
                # Plant distance:
                numericInput(inputId = "plant_dist", label = "Distance between palm trees in the scene",
                             value = 9.2, min = 1, max = 100, step = 0.01),
-               
+
                # Advanced parameters:
                p("You can trigger advanced parameters if you need them, but please remember they should be
              used by advanced users only."),
                # actionButton(inputId = "advanced_param_button",label = "Trigger advanced parameters"),
                p(strong("Trigger advanced parameters")),
-               actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle "),
+               actionButton(inputId = "advanced_param_button",label = icon("exclamation-triangle"),
                             style= "color:white;
                        background-color: #E31F1F"),
                conditionalPanel(
@@ -416,7 +416,7 @@ ui <- navbarPage(
                    p("You seem to be an advanced user. Do you need to use a custom planting design ? Or maybe
                use randomly generated palm trees for each progeny instead of the average one ?"),
                    fluidRow(
-                     
+
                      numericInput(inputId = "nbtrees",
                                   label = "Number of random trees",
                                   value = 0, min = 1, max = 100, step = 1)

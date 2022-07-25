@@ -10,6 +10,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
 # VPalm IDE<img src="www/logo.png" alt="logo" width="150" align="right" />
 
 ## Introduction
@@ -32,7 +33,7 @@ To install VPALM_IDE, simply download this repository wherever you want, and dow
 ### Developer
 
 To build the electron app, you need to download and install [node.js](https://nodejs.org/en/download/), and to restart your computer.
-Then, you need to download [R-portable]() so your application does not depends on external ressources. You can also follow this [link](https://sourceforge.net/projects/rportable/files/latest/download) that points to the latest release of the project. 
+Then, you need to download [R-portable]() so your application does not depends on external ressources. You can also follow this [link](https://sourceforge.net/projects/rportable/files/latest/download) that points to the latest release of the project.
 
 Then, clone this repository:
 
@@ -42,6 +43,7 @@ git clone https://github.com/PalmStudio/VPALM_IDE
 # Go into the repository
 cd VPALM_IDE
 ```
+
 Unzip the R-portable archive into the root of the project.
 
 And now you can install the app and run it for the first time following these steps:
@@ -57,9 +59,10 @@ The installation adds a new folder called `node_modules` into your project.
 
 ## Build
 
-### Windows 
+### Windows
 
 If the app is running with no issue, then you can build the electron application:
+
 ```bash
 npm run package-win
 ```
@@ -81,9 +84,10 @@ npm run package-mac
 ```bash
 npm run package-all
 ```
+
 NB: not tested yet.
 
-### Issues 
+### Issues
 
 If it does not work, it is probably because the packager is not installed. try to run this command, and re-run the previous one:
 
@@ -98,11 +102,11 @@ A new folder called `builds` appeared on the project. The electron application y
 ## Share
 
 You can share the application just by copy/pasting it into a USB key or by deploying it on the cloud. You might want to
-compress it beforehand though.  
+compress it beforehand though.
 
 ## Build Windows installer
 
-To build windows installer, we use the [windows-installer app](https://github.com/electron/windows-installer). 
+To build windows installer, we use the [windows-installer app](https://github.com/electron/windows-installer).
 Simply follow these instructions to build it:
 
 Install the package if not already done:
@@ -126,17 +130,15 @@ NB: Several interesting build options are available for the installer, see [the 
 
 It is possible to add automatic updates to the app by using a remote repository. To set it up, we can add the option `remoteReleases` (see [here](https://github.com/electron/windows-installer) for more details) and `remoteToken` if necessary. The link should point the releases folders *i.e.* the `installer-x64` folder for our example. Then electron will check for any updates automatically, dowload them and install them if necessary. Further details are available on the [Squirrel.Windows documentation](https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/readme.md). Also see [this](https://stackoverflow.com/questions/42749972/how-to-make-a-simple-updater-for-electron-application) and [this](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05).
 
-
 ## Summary
 
 To update the application and the installer, simply run these commands:
+
 ```bash
- npm install
- npm run package-win
- node build.js
+npm install
+npm run package-win
+node build.js
 ```
-
-
 
 References
 ----------
